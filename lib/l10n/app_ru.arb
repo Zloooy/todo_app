@@ -1,0 +1,14 @@
+{
+    "myTasks": "Мои дела",
+    "@myTasks": {
+        "type": "text"
+    },
+    "tasksCompleted": "Выполнено -",
+    "@taskCompleted": {
+        "type": "text"
+    },
+    "date": "дата",
+    "@date": {
+        "type": "text"
+    }
+}
