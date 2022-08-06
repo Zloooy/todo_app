@@ -1,59 +1,81 @@
+import 'package:boxy/slivers.dart';
 import 'package:flutter/material.dart';
-
-import 'package:sliver_tools/sliver_tools.dart';
-import 'package:todo_app/features/task_list/data/dto/short_task.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/core/data/repository/task_repository.dart';
+import 'package:todo_app/core/presentation/navigation/route_mapper.dart';
+import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc.dart';
+import 'package:todo_app/features/task_list/presentation/bloc/task_list_state.dart';
+import 'package:todo_app/features/task_list/presentation/widgets/new_item.dart';
+import 'package:todo_app/features/task_list/presentation/widgets/task_list_header_delegate.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/task_list_item.dart';
-
-import 'task_list_header_delegate.dart';
-
-const List<TaskStatus> statuses = TaskStatus.values;
-
-const List<String> texts = [
-  "Купить что-то",
-  "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обрезается"
-];
 
 class TaskList extends StatelessWidget {
   TaskList({Key? key}) : super(key: key);
-  final List<ShortTask> tasks = texts
-      .map((text) => TaskStatus.values
-          .map((status) => TaskPriority.values.map((priority) =>
-              ShortTask(text: text, status: status, priority: priority)))
-          .expand((i) => i))
-      .expand((i) => i)
-      .toList();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-         SliverPersistentHeader(
-          pinned: true,
-          delegate: TaskListHeaderDelegate()
-         ),
-          SliverPadding(
-            padding: const EdgeInsets.all(8),
-            sliver: SliverStack(
-              insetOnOverlap: false,
-              children: [
-                const SliverPositioned.fill(child: Card()),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, i) => TaskListItem(task: tasks[i]),
-                    childCount: tasks.length,
+    return BlocProvider(
+        create: (context) =>
+            TaskListBloc(RepositoryProvider.of<TaskRepository>(context)),
+        child: BlocBuilder<TaskListBloc, TaskListState>(
+            builder: (context, state) => Scaffold(
+                  body: CustomScrollView(
+                    slivers: [
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: TaskListHeaderDelegate(
+                          doneCount: state.doneCount,
+                          showDone: state.showDone,
+                          onSwitchShowDone: () =>
+                              BlocProvider.of<TaskListBloc>(context)
+                                  .add(SwitchDoneTaskVisibilityEvent()),
+                        ),
+                      ),
+                      SliverPadding(
+                        padding: const EdgeInsets.all(8),
+                        sliver: SliverCard(
+                          clipBehavior: Clip.antiAlias,
+                          sliver: state.loaded
+                              ? SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, i) => (i < state.tasks.length)
+                                        ? TaskListItem(
+                                            onChangeDone: (done) =>
+                                                BlocProvider.of<TaskListBloc>(
+                                                        context)
+                                                    .add(ChangeTaskDoneEvent(
+                                                        task: state.tasks[i],
+                                                        done: done)),
+                                            onDelete: () =>
+                                                BlocProvider.of<TaskListBloc>(
+                                                        context)
+                                                    .add(DeleteTaskEvent(
+                                                        state.tasks[i])),
+                                            task: state.tasks[i])
+                                        : AddTask(
+                                            onInputEnd: (text) =>
+                                                BlocProvider.of<TaskListBloc>(
+                                                        context)
+                                                    .add(CreateTaskEvent(text)),
+                                          ),
+                                    childCount: state.tasks.length + 1,
+                                  ),
+                                )
+                              : const SliverFillRemaining(
+                                  child: Center(
+                                      child: SizedBox(
+                                          width: 50,
+                                          height: 50,
+                                          child: CircularProgressIndicator()))),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: (){}
-      ),
-    );
+                  floatingActionButton: FloatingActionButton(
+                      child: const Icon(Icons.add),
+                      onPressed: () {
+                        RouteMapper.goToEditTask(null, context);
+                      }),
+                )));
   }
 }
-

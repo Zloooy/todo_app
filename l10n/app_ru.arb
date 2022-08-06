@@ -1,0 +1,34 @@
+{
+    "myTasks": "Мои дела",
+    "@myTasks": {
+        "type": "text"
+    },
+    "tasksCompleted": "Выполнено -",
+    "@taskCompleted": {
+        "type": "text"
+    },
+    "date": "дата",
+    "@date": {
+        "type": "text"
+    },
+    "save": "Сохранить",
+    "@save": {
+        "type": "text"
+    },
+    "importance": "Важность",
+    "@importance": {
+        "type": "text"
+    },
+    "makeUpTo": "Сделать до",
+    "@makeUpTo": {
+        "type": "text"
+    },
+    "delete": "Удалить",
+    "@delete": {
+        "type": "text"
+    },
+    "newTask": "Новое",
+    "@newTask": {
+        "type": "text"
+    }
+}
