@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class DropdownList<T> extends StatefulWidget {
-  const DropdownList(
-      {
-      required this.itemBuilder,
-      required Widget this.child,
-      required this.items,
-      required this.onSelectItem,
-      super.key,
-      });
+  const DropdownList({
+    required this.itemBuilder,
+    required Widget this.child,
+    required this.items,
+    required this.onSelectItem,
+    super.key,
+  });
   final ValueChanged<T> onSelectItem;
   final Widget child;
   final List<T> items;

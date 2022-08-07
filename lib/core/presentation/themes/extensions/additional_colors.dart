@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AdditionalColors extends ThemeExtension<AdditionalColors> {
-  AdditionalColors(
-      {required this.green,
-      required this.red,
-      required this.blue,
-      required this.transparentRed});
+  AdditionalColors({
+    required this.green,
+    required this.red,
+    required this.blue,
+    required this.transparentRed,
+  });
   final Color red;
   final Color blue;
   final Color green;

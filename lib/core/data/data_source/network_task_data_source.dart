@@ -18,8 +18,8 @@ class NetworkTaskDataSource {
             baseUrl: _baseUrl,
             headers: {_auth_header: '$_bearer ${dotenv.env["TOKEN"]}'},
             validateStatus: (status) => true,
-            ),
-            );
+          ),
+        );
 
   Future<LastKnownRevisionWrapper<List<TaskDto>>?> getAllTasks() async {
     try {

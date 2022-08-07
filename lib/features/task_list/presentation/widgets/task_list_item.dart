@@ -11,23 +11,14 @@ class TaskListItem extends StatefulWidget {
   final TaskEntity task;
   final ValueChanged<bool> onChangeDone;
   final VoidCallback onDelete;
-<<<<<<< HEAD
   final VoidCallback onInfoClick;
-  TaskListItem(
-      {Key? key,
-      required this.task,
-      required this.onChangeDone,
-      required this.onDelete,
-      required this.onInfoClick})
-      : super(key: key);
-=======
-  const TaskListItem({
+  TaskListItem({
     Key? key,
     required this.task,
     required this.onChangeDone,
     required this.onDelete,
+    required this.onInfoClick,
   }) : super(key: key);
->>>>>>> development
 
   @override
   State<TaskListItem> createState() => _TaskListItemState();

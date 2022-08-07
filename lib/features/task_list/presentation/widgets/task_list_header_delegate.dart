@@ -50,11 +50,14 @@ class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           IconTheme(
-                              data: Theme.of(context)
-                                  .extension<BlueIconTheme>()!
-                                  .theme,
-                              child:
-                                  VisibilityIcon(showDone: showDone, onSwitchShowDone: onSwitchShowDone,),)
+                            data: Theme.of(context)
+                                .extension<BlueIconTheme>()!
+                                .theme,
+                            child: VisibilityIcon(
+                              showDone: showDone,
+                              onSwitchShowDone: onSwitchShowDone,
+                            ),
+                          )
                         ],
                       )
                     ],
