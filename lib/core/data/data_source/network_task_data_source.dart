@@ -12,9 +12,13 @@ class NetworkTaskDataSource {
   static const String _lastKnownRevisionHeader = 'X-Last-Known-Revision';
   static const String _baseUrl = 'https://beta.mrdekk.ru/todobackend';
   NetworkTaskDataSource()
-      : _dio = Dio(BaseOptions(
+      : _dio = Dio(
+          BaseOptions(
             baseUrl: _baseUrl,
-            headers: {'Authorization': 'Bearer ${dotenv.env["TOKEN"]}'}));
+            headers: {'Authorization': 'Bearer ${dotenv.env["TOKEN"]}'},
+            validateStatus: (status) => true,
+          ),
+        );
 
   Future<LastKnownRevisionWrapper<List<TaskDto>>?> getAllTasks() async {
     try {
@@ -106,7 +110,7 @@ class NetworkTaskDataSource {
   Future<TaskDto?> modifyTask(LastKnownRevisionWrapper<TaskDto> task) async {
     try {
       final resp = await _dio.put<Map<String, dynamic>>(
-        '/list',
+        '/list/${task.value.id}',
         options: _revisionHeaderOptions(task.lastKnownRevision),
         data: task.value,
       );
@@ -124,8 +128,9 @@ class NetworkTaskDataSource {
 
   Future<bool> deleteTask(LastKnownRevisionWrapper<TaskDto> task) async {
     try {
-      final resp =
-          await _dio.delete<Map<String, dynamic>>('/list/${task.value.id}');
+      final resp = await _dio.delete<Map<String, dynamic>>(
+          '/list/${task.value.id}',
+          options: _revisionHeaderOptions(task.lastKnownRevision));
       switch (resp.statusCode) {
         case 200:
           return true;

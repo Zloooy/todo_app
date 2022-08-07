@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:todo_app/core/presentation/edit_text.dart';
 
 class AddTask extends StatefulWidget {
   final void Function(String) onInputEnd;
@@ -66,6 +67,11 @@ class _AddTaskState extends State<AddTask> {
             ],
           ),
         ));
+  }
+
+  bool onSubmit(TextEditingController controller) {
+    controller.clear();
+    return true;
   }
 
   void _onInputEnd(String text) {

@@ -30,5 +30,29 @@
     "newTask": "Новое",
     "@newTask": {
         "type": "text"
+    },
+    "taskNotFound": "Задача не найдена",
+    "@taskNotFound": {
+        "type": "text"
+    },
+    "isThereSomethingToDo": "Надо что-то сделать...",
+    "@isThereSomethingToDo": {
+        "type": "text"
+    },
+    "importanceBasic": "Нет",
+    "@importanceBasic": {
+        "type": "text"
+    },
+    "importanceLow": "Низкий",
+    "@importanceLow": {
+        "type": "text"
+    },
+    "importanceImportant": "Высокий",
+    "@importanceImportant": {
+        "type": "text"
+    },
+    "dateNotDefined": "Не задана",
+    "@dateNotDefined": {
+        "type": "text"
     }
 }

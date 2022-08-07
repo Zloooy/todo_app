@@ -7,7 +7,7 @@ abstract class RouteMapper {
       Navigator.of(context).pushNamed(Routes.TASK_LIST_ROUTE);
 
   static Future<dynamic> goToEditTask(TaskEntity? task, BuildContext context) {
-    // TODO обрабатывать и передавать id
-    return Navigator.of(context).pushNamed(Routes.TASK_EDIT_ROUTE);
+    return Navigator.of(context)
+        .pushNamed(Routes.TASK_EDIT_ROUTE, arguments: task?.id);
   }
 }

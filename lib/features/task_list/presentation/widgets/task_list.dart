@@ -51,6 +51,13 @@ class TaskList extends StatelessWidget {
                                                         context)
                                                     .add(DeleteTaskEvent(
                                                         state.tasks[i])),
+                                            onInfoClick: () async {
+                                              await RouteMapper.goToEditTask(
+                                                  state.tasks[i], context);
+                                              BlocProvider.of<TaskListBloc>(
+                                                      context)
+                                                  .add(ReloadTaskListEvent());
+                                            },
                                             task: state.tasks[i])
                                         : AddTask(
                                             onInputEnd: (text) =>
@@ -73,8 +80,10 @@ class TaskList extends StatelessWidget {
                   ),
                   floatingActionButton: FloatingActionButton(
                       child: const Icon(Icons.add),
-                      onPressed: () {
-                        RouteMapper.goToEditTask(null, context);
+                      onPressed: () async {
+                        await RouteMapper.goToEditTask(null, context);
+                        BlocProvider.of<TaskListBloc>(context)
+                            .add(ReloadTaskListEvent());
                       }),
                 )));
   }

@@ -79,6 +79,7 @@ class TaskRepository {
     } else {
       final newTask = prevTask.updateFromEntity(task);
       final DateTime syncTime = DateTime.now();
+      // TODO разобраться с 301 ошибкой
       final result = await _networkDS.modifyTask(
         LastKnownRevisionWrapper(
           lastKnownRevision: _localDS.lastKnownRevision + 1,
