@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_app/core/presentation/themes/extensions/blue_icon_theme.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/visibility_icon.dart';
 
@@ -55,7 +54,7 @@ class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
                                   .extension<BlueIconTheme>()!
                                   .theme,
                               child:
-                                  _visibilityIcon(showDone, onSwitchShowDone))
+                                  VisibilityIcon(showDone: showDone, onSwitchShowDone: onSwitchShowDone,),)
                         ],
                       )
                     ],
