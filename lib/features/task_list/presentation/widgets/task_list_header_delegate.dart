@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_app/core/presentation/themes/extensions/blue_icon_theme.dart';
+import 'package:todo_app/features/task_list/presentation/widgets/visibility_icon.dart';
 
 class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
-  TaskListHeaderDelegate(
-      {required this.doneCount,
-      required this.showDone,
-      required this.onSwitchShowDone});
+  const TaskListHeaderDelegate({
+    required this.doneCount,
+    required this.showDone,
+    required this.onSwitchShowDone,
+  });
+
   final int doneCount;
   final bool showDone;
   final VoidCallback onSwitchShowDone;
   final double maxShrinkOffset = 50;
+
   @override
   Widget build(
     BuildContext context,
@@ -51,7 +54,7 @@ class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
                                   .extension<BlueIconTheme>()!
                                   .theme,
                               child:
-                                  _visibilityIcon(showDone, onSwitchShowDone))
+                                  VisibilityIcon(showDone: showDone, onSwitchShowDone: onSwitchShowDone,),)
                         ],
                       )
                     ],
@@ -73,23 +76,17 @@ class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     IconTheme(
-                      data: Theme.of(context).extension<BlueIconTheme>()!.theme,
-                      child: _visibilityIcon(showDone, onSwitchShowDone),
-                    )
+                        data:
+                            Theme.of(context).extension<BlueIconTheme>()!.theme,
+                        child: VisibilityIcon(
+                            onSwitchShowDone: onSwitchShowDone,
+                            showDone: showDone))
                   ],
                 ),
               ),
             ),
           );
   }
-
-  Widget _visibilityIcon(bool showDone, VoidCallback onSwitchShowDone) =>
-      InkWell(
-        onTap: onSwitchShowDone,
-        child: showDone
-            ? SvgPicture.asset('assets/icons/visibility.svg')
-            : SvgPicture.asset('assets/icons/visibility_off.svg'),
-      );
 
   @override
   double get maxExtent => 164;

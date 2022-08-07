@@ -1,16 +1,17 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 import 'package:todo_app/core/presentation/themes/extensions/additional_colors.dart';
 import 'package:todo_app/core/presentation/themes/extensions/additional_text_styles.dart';
 import 'package:todo_app/core/presentation/themes/extensions/red_checkbox_theme.dart';
+import 'package:todo_app/features/task_list/presentation/widgets/priority_sign.dart';
 
 class TaskListItem extends StatefulWidget {
   final TaskEntity task;
   final ValueChanged<bool> onChangeDone;
   final VoidCallback onDelete;
+<<<<<<< HEAD
   final VoidCallback onInfoClick;
   TaskListItem(
       {Key? key,
@@ -19,6 +20,14 @@ class TaskListItem extends StatefulWidget {
       required this.onDelete,
       required this.onInfoClick})
       : super(key: key);
+=======
+  const TaskListItem({
+    Key? key,
+    required this.task,
+    required this.onChangeDone,
+    required this.onDelete,
+  }) : super(key: key);
+>>>>>>> development
 
   @override
   State<TaskListItem> createState() => _TaskListItemState();
@@ -129,27 +138,6 @@ class _TaskListItemState extends State<TaskListItem> {
                         Text.rich(
                           TextSpan(
                             children: [
-                              // WidgetSpan(
-                              //   alignment: PlaceholderAlignment.middle,
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.only(right: 15),
-                              //     child: task.status == TaskStatus.overdue
-                              //         ? CheckboxTheme(
-                              //             data: redCheckboxTheme,
-                              //             child: Container(
-                              //               width: 14,
-                              //               height: 17,
-                              //               color: additionalColors.red
-                              //                   .withOpacity(0.33),
-                              //               child: checkbox,
-                              //             ),
-                              //           )
-                              //         : SizedBox(
-                              //             width: 14,
-                              //             height: 17,
-                              //             child: checkbox),
-                              //   ),
-                              // ),
                               if (widget.task.importance != Importance.basic)
                                 WidgetSpan(
                                   alignment: PlaceholderAlignment.middle,
@@ -157,8 +145,8 @@ class _TaskListItemState extends State<TaskListItem> {
                                     padding: const EdgeInsets.only(
                                       right: 6,
                                     ),
-                                    child:
-                                        _prioritySign(widget.task.importance)!,
+                                    child: PrioritySign(
+                                        importance: widget.task.importance),
                                   ),
                                 ),
                               TextSpan(
@@ -188,88 +176,6 @@ class _TaskListItemState extends State<TaskListItem> {
         ),
       ),
     );
-    // return Theme(
-    //   data: task.status != TaskStatus.overdue
-    //         ? regularCheckboxTheme
-    //          : redCheckboxTheme,
-    //   child: Dismissible(
-    //    key: ValueKey(task),
-    //    background: ColoredBox(color: additionalColors.green,
-    //    child: Row(
-    //      children: [
-    //        Padding(
-    //        padding: const EdgeInsets.all(27),
-    //        child: Icon(
-    //          color: Theme.of(context).colorScheme.onSecondary,
-    //          Icons.check
-    //          ),
-    //      )]
-    //      ),
-    //    ),
-    //    secondaryBackground: ColoredBox(color: additionalColors.red,
-    //   child: Row(
-    //      mainAxisAlignment: MainAxisAlignment.end,
-    //      children: [Padding(
-    //        padding: const EdgeInsets.all(27),
-    //        child: Icon(
-    //          color: Theme.of(context).colorScheme.onSecondary,
-    //          Icons.delete
-    //          ),
-    //      )]
-    //      )),
-    //      child: Padding(
-    //     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 19),
-    //     child: Column(
-    //       children: [
-    //         Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //             crossAxisAlignment: CrossAxisAlignment.center,
-    //             children: [
-    //               Row(
-    //                 crossAxisAlignment: CrossAxisAlignment.center,
-    //                 children: [
-    //                   Container(
-    //                       width: 14,
-    //                       height: 14,
-    //                       color: additionalColors.red.withOpacity(0.33),
-    //                       child: Checkbox(
-    //                         value: task.status == TaskStatus.done,
-    //                         onChanged: (_) {},
-    //                       )),
-    //                   Padding(
-    //                     padding: const EdgeInsets.symmetric(horizontal: 15),
-    //                     child: IntrinsicWidth(
-    //                       child: Row(
-    //                         mainAxisSize: MainAxisSize.max,
-    //                         crossAxisAlignment: CrossAxisAlignment.center,
-    //                         children: [
-    //                           if (task.priority.show) _prioritySign(task.priority)!,
-    //                             Expanded(child: Text(task.text, maxLines: 3, overflow: TextOverflow.ellipsis))
-    //                         ],
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ],
-    //               ),
-    //               const Icon(Icons.info_outline),
-    //             ]),
-    //       ],
-    //     ),
-    //   )),
-    // );
-  }
-
-  Widget? _prioritySign(Importance importance) {
-    //const double boxWidth = 16, boxHeight = 20;
-    //final double minSide = min(boxWidth, boxHeight);
-    switch (importance) {
-      case Importance.important:
-        return SvgPicture.asset('assets/icons/double_exclamation_mark.svg');
-      case Importance.low:
-        return SvgPicture.asset('assets/icons/downward_arrow.svg');
-      case Importance.basic:
-        return null;
-    }
   }
 
   Future<bool> _confirmDismiss(DismissDirection direction) {

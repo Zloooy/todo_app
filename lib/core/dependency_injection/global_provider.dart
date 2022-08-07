@@ -5,7 +5,10 @@ import 'package:todo_app/core/data/data_source/network_task_data_source.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
 
 class GlobalProvider extends StatelessWidget {
-  const GlobalProvider({required this.app, super.key});
+  const GlobalProvider({
+    required this.app,
+    super.key,
+  });
 
   final Widget app;
 

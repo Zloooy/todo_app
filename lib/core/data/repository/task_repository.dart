@@ -5,22 +5,21 @@ import 'package:todo_app/core/data/data_source/local_data_source.dart';
 import 'package:todo_app/core/data/data_source/network_task_data_source.dart';
 import 'package:todo_app/core/data/dto/last_known_revision_wrapper.dart';
 import 'package:todo_app/core/data/dto/task_dto.dart';
-import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 
 final Logger _log = Logger('TaskRepository');
 
 class TaskRepository {
-  TaskRepository(
-      {required NetworkTaskDataSource networkTaskDataSource,
-      required LocalTaskDataSource localTaskDataSource})
-      : _networkDS = networkTaskDataSource,
+  TaskRepository({
+    required NetworkTaskDataSource networkTaskDataSource,
+    required LocalTaskDataSource localTaskDataSource,
+  })  : _networkDS = networkTaskDataSource,
         _localDS = localTaskDataSource;
 
   final LocalTaskDataSource _localDS;
   final NetworkTaskDataSource _networkDS;
 
-  Future<List<TaskEntity>> getAllTasks() async => (_localDS.getAllTasks()
+  Future<List<TaskEntity>> getAllTasks() async => (await _localDS.getAllTasks()
         ..sort((a, b) => a.createdAt.compareTo(b.createdAt)))
       .map(TaskEntity.fromDto)
       .cast<TaskEntity>()
@@ -177,33 +176,5 @@ class TaskRepository {
       }
     }
     return false;
-  }
-
-  static const List<String> _texts = [
-    "Купить что-то",
-    "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обрезается"
-  ];
-  T exp<T>(T el) => el;
-
-  Future<List<TaskEntity>> _getAllTasksTEST() async {
-    //await Future.delayed<void>(const Duration(seconds: 5));
-    return TaskRepository._texts
-        .map(
-          (String text) => Importance.values
-              .map(
-                (Importance importance) => const [true, false].map(
-                  (bool done) => TaskEntity(
-                    id: '111',
-                    text: text,
-                    importance: importance,
-                    done: done,
-                  ),
-                ),
-              )
-              .expand(exp),
-        )
-        .expand(exp)
-        .cast<TaskEntity>()
-        .toList();
   }
 }

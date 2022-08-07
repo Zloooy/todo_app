@@ -4,7 +4,7 @@ import 'package:todo_app/core/presentation/edit_text.dart';
 
 class AddTask extends StatefulWidget {
   final void Function(String) onInputEnd;
-  AddTask({required this.onInputEnd, super.key});
+  const AddTask({required this.onInputEnd, super.key});
 
   @override
   _AddTaskState createState() => _AddTaskState();
