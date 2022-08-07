@@ -1,6 +1,8 @@
 # Done
 Приложение для отслеживания задач.
 
+[Загрузить apk](https://github.com/Zloooy/todo_app/releases/download/0.0.1-alpha/app-release.apk)
+
 ## Screenshots
 
 ![task_list](./screenshots/task_list.png)
