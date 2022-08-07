@@ -1,32 +1,31 @@
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 import 'package:todo_app/core/data/dto/last_known_revision_wrapper.dart';
+import 'package:todo_app/core/data/dto/single_task_network_response_dto.dart';
 import 'package:todo_app/core/data/dto/task_dto.dart';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:todo_app/core/data/dto/task_list_dto.dart';
+
+part 'network_constants.dart';
 
 final _log = Logger('NetworkTaskDataSource');
 
 class NetworkTaskDataSource {
   final Dio _dio;
-  static const String _lastKnownRevisionHeader = 'X-Last-Known-Revision';
-  static const String _baseUrl = 'https://beta.mrdekk.ru/todobackend';
   NetworkTaskDataSource()
       : _dio = Dio(BaseOptions(
             baseUrl: _baseUrl,
-            headers: {'Authorization': 'Bearer ${dotenv.env["TOKEN"]}'}));
+            headers: {_auth_header: '$_bearer ${dotenv.env["TOKEN"]}'}));
 
   Future<LastKnownRevisionWrapper<List<TaskDto>>?> getAllTasks() async {
     try {
-      final resp = await _dio.get<Map<String, dynamic>>('/list');
+      final resp = await _dio.get<Map<String, Object?>>(_list_path);
       switch (resp.statusCode) {
         case 200:
-          final respMap = resp.data as Map<String, dynamic>;
+          final respList = TaskListDto.fromJson(resp.data!);
           return LastKnownRevisionWrapper(
-            lastKnownRevision: respMap['revision'] as int,
-            value: TaskDto.listFromJson(
-              (respMap['list'] as List).cast<Map<String, dynamic>>(),
-            ),
+            lastKnownRevision: respList.revision ?? 0,
+            value: respList.list,
           );
         default:
           return null;
@@ -41,22 +40,17 @@ class NetworkTaskDataSource {
     LastKnownRevisionWrapper<List<TaskDto>> tasks,
   ) async {
     try {
-      final resp = await _dio.patch<Map<String, dynamic>>(
-        '/list',
-        data: {
-          'status': 'ok',
-          'list': tasks.value,
-        },
+      final resp = await _dio.patch<Map<String, Object?>>(
+        _list_path,
+        data: TaskListDto(list: tasks.value),
         options: _revisionHeaderOptions(tasks.lastKnownRevision),
       );
       switch (resp.statusCode) {
         case 200:
-          final respMap = resp.data as Map<String, dynamic>;
+          final respList = TaskListDto.fromJson(resp.data!);
           return LastKnownRevisionWrapper(
-            lastKnownRevision: respMap['revision'] as int,
-            value: TaskDto.listFromJson(
-              (respMap['list'] as List).cast<Map<String, dynamic>>(),
-            ),
+            lastKnownRevision: respList.revision ?? 0,
+            value: respList.list,
           );
         default:
           return null;
@@ -69,12 +63,13 @@ class NetworkTaskDataSource {
 
   Future<LastKnownRevisionWrapper<TaskDto>?> getTaskById(String id) async {
     try {
-      final resp = await _dio.get<Map<String, dynamic>>('/list/$id');
+      final resp = await _dio.get<Map<String, Object?>>('$_list_path/$id');
       if (resp.statusCode == 200 && resp.data != null) {
+        final responseElement =
+            SingleTaskNetworkResponseDto.fromJson(resp.data!);
         return LastKnownRevisionWrapper(
-          lastKnownRevision: resp.data!['revision'] as int,
-          value:
-              TaskDto.fromJson(resp.data!['element'] as Map<String, dynamic>),
+          lastKnownRevision: responseElement.revision ?? 0,
+          value: responseElement.element,
         );
       }
     } catch (e) {
@@ -86,14 +81,13 @@ class NetworkTaskDataSource {
 
   Future<TaskDto?> createTask(LastKnownRevisionWrapper<TaskDto> task) async {
     try {
-      final resp = await _dio.post<Map<String, dynamic>>(
-        '/list',
-        options: _revisionHeaderOptions(task.lastKnownRevision),
-        data: task.value,
-      );
+      final resp = await _dio.post<Map<String, Object?>>(_list_path,
+          options: _revisionHeaderOptions(task.lastKnownRevision),
+          data:
+              SingleTaskNetworkResponseDto(status: 'ok', element: task.value));
       switch (resp.statusCode) {
         case 200:
-          return TaskDto.fromJson(resp.data as Map<String, dynamic>);
+          return SingleTaskNetworkResponseDto.fromJson(resp.data!).element;
         default:
           return null;
       }
@@ -105,14 +99,13 @@ class NetworkTaskDataSource {
 
   Future<TaskDto?> modifyTask(LastKnownRevisionWrapper<TaskDto> task) async {
     try {
-      final resp = await _dio.put<Map<String, dynamic>>(
-        '/list',
-        options: _revisionHeaderOptions(task.lastKnownRevision),
-        data: task.value,
-      );
+      final resp = await _dio.put<Map<String, Object?>>(_list_path,
+          options: _revisionHeaderOptions(task.lastKnownRevision),
+          data:
+              SingleTaskNetworkResponseDto(status: 'ok', element: task.value));
       switch (resp.statusCode) {
         case 200:
-          return TaskDto.fromJson(resp.data as Map<String, dynamic>);
+          return SingleTaskNetworkResponseDto.fromJson(resp.data!).element;
         default:
           return null;
       }
@@ -124,8 +117,8 @@ class NetworkTaskDataSource {
 
   Future<bool> deleteTask(LastKnownRevisionWrapper<TaskDto> task) async {
     try {
-      final resp =
-          await _dio.delete<Map<String, dynamic>>('/list/${task.value.id}');
+      final resp = await _dio
+          .delete<Map<String, Object?>>('$_list_path/${task.value.id}');
       switch (resp.statusCode) {
         case 200:
           return true;
