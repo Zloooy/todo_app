@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:todo_app/core/presentation/edit_text.dart';
 
 class AddTask extends StatefulWidget {
   final void Function(String) onInputEnd;
@@ -27,14 +26,14 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: ListTile(
           minLeadingWidth: 0,
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                  padding: const EdgeInsets.only(right: 15),
+                  padding: const EdgeInsets.only(right: 4),
                   child: IconButton(
                       onPressed: () => _onInputEnd(_controller.text),
                       icon: Icon(Icons.add))),
