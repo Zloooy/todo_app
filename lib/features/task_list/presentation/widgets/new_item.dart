@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddTask extends StatefulWidget {
   final void Function(String) onInputEnd;
-  AddTask({required this.onInputEnd, super.key});
+  const AddTask({required this.onInputEnd, super.key});
 
   @override
   _AddTaskState createState() => _AddTaskState();

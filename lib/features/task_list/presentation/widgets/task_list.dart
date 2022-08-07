@@ -10,7 +10,7 @@ import 'package:todo_app/features/task_list/presentation/widgets/task_list_heade
 import 'package:todo_app/features/task_list/presentation/widgets/task_list_item.dart';
 
 class TaskList extends StatelessWidget {
-  TaskList({Key? key}) : super(key: key);
+  const TaskList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +72,14 @@ class TaskList extends StatelessWidget {
                     ],
                   ),
                   floatingActionButton: FloatingActionButton(
-                      child: const Icon(Icons.add),
-                      onPressed: () {
-                        RouteMapper.goToEditTask(null, context);
-                      }),
+                    child: const Icon(Icons.add),
+                    onPressed: () {
+                      RouteMapper.goToEditTask(
+                        null,
+                        context,
+                      );
+                    },
+                  ),
                 )));
   }
 }

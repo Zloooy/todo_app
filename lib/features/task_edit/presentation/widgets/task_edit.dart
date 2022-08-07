@@ -77,27 +77,7 @@ class _TaskEditState extends State<TaskEdit> {
                   Card(
                       child: Padding(
                           padding: const EdgeInsets.all(16),
-                          child:
-                              //Expanded(child:
-                              Text(testText)
-                          //),
-                          )),
-                  // DropdownButtonHideUnderline(
-                  //   child: ButtonTheme(
-                  //     alignedDropdown: true,
-                  //     child: SizedBox(
-                  //       height: 64,
-                  //       child: DropdownButton<String>(
-                  //         alignment: Alignment.topCenter,
-                  //         isDense: false,
-                  //         isExpanded: false,
-                  //         iconSize: 0,
-                  //         onChanged: (_){},
-                  //         items: [
-                  //           DropdownMenuItem<String>(child: const Text('aaa'), value: 'aaa',),
-                  //           DropdownMenuItem<String>(child: const Text('bbb'), value: 'bbb',),
-                  //         ],
-                  //         hint: //Text('lslsl')
+                          child: Text(testText))),
                   DropdownList<String>(
                     items: const <String>["aaa", "bbb"],
                     itemBuilder: (BuildContext context, String str) => Material(
