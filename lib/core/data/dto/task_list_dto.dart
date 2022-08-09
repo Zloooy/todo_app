@@ -6,11 +6,12 @@ part 'task_list_dto.g.dart';
 
 @freezed
 class TaskListDto with _$TaskListDto {
-  factory TaskListDto(
-      {@Default('ok') String status,
-      int? revision,
-      required List<TaskDto> list}) = _TaskListDto;
+  factory TaskListDto({
+    @Default('ok') String status,
+    int? revision,
+    required List<TaskDto> list,
+  }) = _TaskListDto;
 
-  factory TaskListDto.fromJson(Map<String, dynamic> json) =>
+  factory TaskListDto.fromJson(Map<String, Object?> json) =>
       _$TaskListDtoFromJson(json);
 }
