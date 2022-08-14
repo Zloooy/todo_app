@@ -2,7 +2,7 @@ import 'package:boxy/slivers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
-import 'package:todo_app/core/presentation/navigation/route_mapper.dart';
+import 'package:todo_app/core/presentation/navigation/navigator_service.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_state.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/new_item.dart';
@@ -74,10 +74,7 @@ class TaskList extends StatelessWidget {
                   floatingActionButton: FloatingActionButton(
                     child: const Icon(Icons.add),
                     onPressed: () {
-                      RouteMapper.goToEditTask(
-                        null,
-                        context,
-                      );
+                      NavigatorService.goToEditTask(null);
                     },
                   ),
                 )));

@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:todo_app/core/data/data_source/local_data_source.dart';
 import 'package:todo_app/core/dependency_injection/global_provider.dart';
+import 'package:todo_app/core/presentation/navigation/navigator_service.dart';
 import 'package:todo_app/core/presentation/navigation/routes.dart';
 import 'package:todo_app/core/presentation/themes/themes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlobalProvider(
       app: MaterialApp(
+        navigatorKey: NavigatorService.navigatorKey,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
