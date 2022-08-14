@@ -1,7 +1,5 @@
-import 'dart:ui' show Color;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:todo_app/core/data/dto/converters/color_converter.dart';
 import 'package:todo_app/core/data/dto/converters/timestamp_converter.dart';
 import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
@@ -12,7 +10,8 @@ part 'task_dto.g.dart';
 class TaskDto with _$TaskDto {
   const TaskDto._();
   @HiveType(typeId: 0, adapterName: 'TaskDtoAdapter')
-  const factory TaskDto({
+  @Assert('color == null || color.startsWith("#"), "Invalid color string"')
+  factory TaskDto({
     @HiveField(0)
         required String id,
     @HiveField(1)
@@ -24,9 +23,8 @@ class TaskDto with _$TaskDto {
     @HiveField(4)
         required bool done,
     @HiveField(5)
-    @ColorConverter()
-    @Default(Color(0xffffffff))
-        Color? color,
+    @Default('#ffffffff')
+        String? color,
     @HiveField(6)
     @TimestampConverter()
     // Issue на эту тему открыт
@@ -59,7 +57,7 @@ class TaskDto with _$TaskDto {
     required DateTime createdAt,
     required DateTime changedAt,
     required String lastUpdatedBy,
-    Color? color,
+    String? color,
   }) =>
       TaskDto(
         id: entity.id,

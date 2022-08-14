@@ -22,7 +22,7 @@ class TaskDtoAdapter extends TypeAdapter<_$_TaskDto> {
       importance: fields[2] as Importance,
       deadline: fields[3] as DateTime?,
       done: fields[4] as bool,
-      color: fields[5] as Color?,
+      color: fields[5] as String?,
       createdAt: fields[6] as DateTime,
       changedAt: fields[7] as DateTime,
       lastUpdatedBy: fields[8] as String,
@@ -76,9 +76,7 @@ _$_TaskDto _$$_TaskDtoFromJson(Map<String, dynamic> json) => _$_TaskDto(
           ? null
           : DateTime.parse(json['deadline'] as String),
       done: json['done'] as bool,
-      color: json['color'] == null
-          ? const Color(0xffffffff)
-          : const ColorConverter().fromJson(json['color'] as String?),
+      color: json['color'] as String? ?? '#ffffffff',
       createdAt: const TimestampConverter().fromJson(json['created_at'] as int),
       changedAt: const TimestampConverter().fromJson(json['changed_at'] as int),
       lastUpdatedBy: json['last_updated_by'] as String,
@@ -91,7 +89,7 @@ Map<String, dynamic> _$$_TaskDtoToJson(_$_TaskDto instance) =>
       'importance': _$ImportanceEnumMap[instance.importance]!,
       'deadline': instance.deadline?.toIso8601String(),
       'done': instance.done,
-      'color': const ColorConverter().toJson(instance.color),
+      'color': instance.color,
       'created_at': const TimestampConverter().toJson(instance.createdAt),
       'changed_at': const TimestampConverter().toJson(instance.changedAt),
       'last_updated_by': instance.lastUpdatedBy,

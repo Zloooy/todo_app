@@ -4,7 +4,6 @@ import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 import 'package:todo_app/core/presentation/themes/extensions/additional_colors.dart';
 import 'package:todo_app/core/presentation/themes/extensions/additional_text_styles.dart';
-import 'package:todo_app/core/presentation/themes/extensions/red_checkbox_theme.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/priority_sign.dart';
 
 class TaskListItem extends StatefulWidget {
@@ -35,7 +34,10 @@ class _TaskListItemState extends State<TaskListItem> {
   @override
   Widget build(BuildContext context) {
     final CheckboxThemeData redCheckboxTheme =
-        Theme.of(context).extension<RedCheckboxTheme>()!.theme;
+        Theme.of(context).checkboxTheme.copyWith(
+              fillColor: MaterialStateProperty.all(
+                  Theme.of(context).extension<AdditionalColors>()!.red),
+            );
     final AdditionalColors additionalColors =
         Theme.of(context).extension<AdditionalColors>()!;
     final TextStyle scratchTextStyle =

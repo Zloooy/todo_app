@@ -26,11 +26,23 @@ class LocalTaskDataSource {
       Hive.registerAdapter(TaskDtoAdapter());
       Hive.registerAdapter(ImportanceAdapter());
       Hive.registerAdapter(ColorAdapter());
-      taskBox = await Hive.openBox<TaskDto>('tasks');
-      revisionBox = await Hive.openBox<dynamic>('revision');
+      taskBox = await _safelyOpenHiveBox<TaskDto>('tasks');
+      revisionBox = await _safelyOpenHiveBox<dynamic>('revision');
       _log.info('Hive boxes inited');
       _inited = true;
     }
+  }
+
+  static Future<Box<T>> _safelyOpenHiveBox<T>(String boxName) async {
+    Box<T>? result;
+    try {
+      result = await Hive.openBox<T>(boxName);
+    } catch (e) {
+      _log.severe(e);
+      await Hive.deleteBoxFromDisk(boxName);
+      result = await Hive.openBox<T>(boxName);
+    }
+    return result;
   }
 
   Future<bool> addOrUpdateTask(TaskDto task) async {

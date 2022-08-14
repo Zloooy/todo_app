@@ -3,8 +3,6 @@ import 'package:todo_app/core/presentation/themes/extensions/additional_text_sty
 
 import 'colors/light_color_set.dart';
 import 'extensions/additional_colors.dart';
-import 'extensions/blue_icon_theme.dart';
-import 'extensions/red_checkbox_theme.dart';
 
 MaterialPropertyResolver<Color> colorSelectedEnabledDisabled(
   Color onSelected,
@@ -31,14 +29,6 @@ final ThemeData lightTheme = ThemeData(
         blue: _light.colorBlue,
         green: _light.colorGreen,
         transparentRed: _light.colorRed.withOpacity(0.16)),
-    RedCheckboxTheme(
-      theme: CheckboxThemeData(
-        fillColor: MaterialStateProperty.resolveWith(
-          (_) => _light.colorRed,
-        ),
-      ),
-    ),
-    BlueIconTheme(theme: IconThemeData(color: _light.colorBlue)),
     AdditionalTextStyles(
         scratchStyle: TextStyle(
             color: _light.labelTertiary,
