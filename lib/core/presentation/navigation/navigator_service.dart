@@ -10,5 +10,5 @@ abstract class NavigatorService {
       navigatorKey.currentState!.pushNamed<void>(Routes.TASK_LIST_ROUTE);
 
   static Future<void> goToEditTask(TaskEntity? task) =>
-      navigatorKey.currentState!.pushNamed<void>(Routes.TASK_EDIT_ROUTE);
+      navigatorKey.currentState!.pushNamed<void>(Routes.TASK_EDIT_ROUTE, arguments: task?.id);
 }

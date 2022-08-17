@@ -46,12 +46,19 @@ class TaskList extends StatelessWidget {
                                                     .add(ChangeTaskDoneEvent(
                                                         task: state.tasks[i],
                                                         done: done)),
-                                            onDelete: () =>
-                                                BlocProvider.of<TaskListBloc>(
-                                                        context)
-                                                    .add(DeleteTaskEvent(
-                                                        state.tasks[i])),
-                                            task: state.tasks[i])
+                                            onDelete: () => BlocProvider.of<
+                                                    TaskListBloc>(context)
+                                                .add(
+                                                    DeleteTaskEvent(state.tasks[i])),
+                                            task: state.tasks[i],
+                                            onInfoClick: () async {
+                                              await NavigatorService.goToEditTask(
+                                                  state.tasks[i]);
+                                              BlocProvider.of<TaskListBloc>(
+                                                      context)
+                                                  .add(ReloadTaskListEvent());
+                                            },
+                                            )
                                         : AddTask(),
                                     childCount: state.tasks.length + 1,
                                   ),
@@ -68,8 +75,11 @@ class TaskList extends StatelessWidget {
                   ),
                   floatingActionButton: FloatingActionButton(
                     child: const Icon(Icons.add),
-                    onPressed: () {
-                      NavigatorService.goToEditTask(null);
+                    onPressed: () async {
+                      await NavigatorService.goToEditTask(null);
+                                              BlocProvider.of<TaskListBloc>(
+                                                      context)
+                                                  .add(ReloadTaskListEvent());
                     },
                   ),
                 )));
