@@ -6,5 +6,5 @@ part 'add_task_state.freezed.dart';
 class AddTaskState with _$AddTaskState {
   const factory AddTaskState({
     required String text,
-    }) = _AddTaskState;
+  }) = _AddTaskState;
 }

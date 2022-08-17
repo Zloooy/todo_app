@@ -16,8 +16,9 @@ class AddTaskBloc extends Bloc<AddTaskEvent, AddTaskState> {
     ChangeTextEvent event,
     Emitter<AddTaskState> emit,
   ) async {
-      emit(state.copyWith(text: event.newText,
-      ));
+    emit(state.copyWith(
+      text: event.newText,
+    ));
   }
 
   Future<void> onSubmitText(
