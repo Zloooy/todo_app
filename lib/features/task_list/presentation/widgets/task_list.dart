@@ -46,10 +46,11 @@ class TaskList extends StatelessWidget {
                                                     .add(ChangeTaskDoneEvent(
                                                         task: state.tasks[i],
                                                         done: done)),
-                                            onDelete: () => BlocProvider.of<
-                                                    TaskListBloc>(context)
-                                                .add(
-                                                    DeleteTaskEvent(state.tasks[i])),
+                                            onDelete: () =>
+                                                BlocProvider.of<TaskListBloc>(
+                                                        context)
+                                                    .add(DeleteTaskEvent(
+                                                        state.tasks[i])),
                                             task: state.tasks[i])
                                         : AddTask(),
                                     childCount: state.tasks.length + 1,

@@ -10,11 +10,13 @@ class TaskListItem extends StatefulWidget {
   final TaskEntity task;
   final ValueChanged<bool> onChangeDone;
   final VoidCallback onDelete;
-  const TaskListItem({
+  final VoidCallback onInfoClick;
+  TaskListItem({
     Key? key,
     required this.task,
     required this.onChangeDone,
     required this.onDelete,
+    required this.onInfoClick,
   }) : super(key: key);
 
   @override
@@ -160,7 +162,10 @@ class _TaskListItemState extends State<TaskListItem> {
           subtitle: widget.task.deadline != null
               ? Text(AppLocalizations.of(context)!.date)
               : null,
-          trailing: const Icon(Icons.info_outline),
+          trailing: IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: widget.onInfoClick,
+          ),
         ),
       ),
     );
@@ -172,8 +177,8 @@ class _TaskListItemState extends State<TaskListItem> {
       setState(() {
         _isDone = true;
       });
+      widget.onChangeDone(_isDone);
     }
-    widget.onChangeDone(_isDone);
     return Future.value(deleting);
   }
 

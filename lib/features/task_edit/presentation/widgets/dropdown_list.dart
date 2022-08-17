@@ -5,8 +5,10 @@ class DropdownList<T> extends StatefulWidget {
     required this.itemBuilder,
     required Widget this.child,
     required this.items,
+    required this.onSelectItem,
     super.key,
   });
+  final ValueChanged<T> onSelectItem;
   final Widget child;
   final List<T> items;
   final Widget Function(BuildContext, T) itemBuilder;
@@ -65,12 +67,14 @@ class _DropdownListState<T> extends State<DropdownList<T>> {
         left: widgetPosition.dx,
         top: widgetPosition.dy,
         child: SizedBox(
+          height: widget.items.length * 55, // TODO добавить атрибут itemHeight
           width: 164,
           child: Card(
+            shape: Border(),
             child: ListView.builder(
               itemCount: widget.items.length,
               itemBuilder: (context, i) => InkWell(
-                onTap: () => this.closeMenu(),
+                onTap: _onSelectItem(widget.items[i]),
                 child: widget.itemBuilder(context, widget.items[i]),
               ),
             ),
@@ -79,4 +83,9 @@ class _DropdownListState<T> extends State<DropdownList<T>> {
       ),
     );
   }
+
+  VoidCallback _onSelectItem(T item) => () {
+        this.closeMenu();
+        widget.onSelectItem(item);
+      };
 }

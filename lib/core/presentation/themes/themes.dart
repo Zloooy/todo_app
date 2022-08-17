@@ -31,6 +31,7 @@ final ThemeData lightTheme = ThemeData(
         transparentRed: _light.colorRed.withOpacity(0.16)),
     AdditionalTextStyles(
         scratchStyle: TextStyle(
+            fontFamily: 'Roboto',
             color: _light.labelTertiary,
             fontSize: 16,
             height: 1.25,
@@ -48,50 +49,61 @@ final ThemeData lightTheme = ThemeData(
     background: _light.backSecondary,
     onBackground: _light.labelPrimary,
     surface: _light.backSecondary,
-    onSurface: _light.backPrimary,
+    onSurface: _light.labelPrimary, //_light.backPrimary,
   ),
   fontFamily: 'Roboto',
   // TODO add button text theme
   textTheme: TextTheme(
-    displayLarge: TextStyle(color: _light.labelPrimary),
-    displayMedium: TextStyle(color: _light.labelPrimary),
-    displaySmall: TextStyle(color: _light.labelPrimary),
+    displayLarge: TextStyle(fontFamily: 'Roboto', color: _light.labelPrimary),
+    displayMedium: TextStyle(fontFamily: 'Roboto', color: _light.labelPrimary),
+    displaySmall: TextStyle(fontFamily: 'Roboto', color: _light.labelPrimary),
     headlineLarge: TextStyle(
+      fontFamily: 'Roboto',
       color: _light.labelPrimary,
     ),
-    headlineMedium: TextStyle(color: _light.labelPrimary),
-    headlineSmall: TextStyle(color: _light.labelPrimary),
+    headlineMedium: TextStyle(fontFamily: 'Roboto', color: _light.labelPrimary),
+    headlineSmall: TextStyle(fontFamily: 'Roboto', color: _light.labelPrimary),
     titleLarge: TextStyle(
+      fontFamily: 'Roboto',
       color: _light.labelPrimary,
       fontSize: 32,
       height: 1.2,
       fontWeight: FontWeight.w500,
     ),
     titleMedium: TextStyle(
+      fontFamily: 'Roboto',
       color: _light.labelPrimary,
       fontSize: 16,
       height: 1.25,
       fontWeight: FontWeight.w400,
     ),
-    titleSmall:
-        TextStyle(color: _light.labelTertiary, fontSize: 20, height: 1.6),
-    labelLarge:
-        TextStyle(color: _light.labelPrimary, fontSize: 20, height: 1.6),
-    labelMedium: TextStyle(color: _light.labelPrimary),
-    labelSmall: TextStyle(color: _light.labelPrimary),
+    titleSmall: TextStyle(
+        fontFamily: 'Roboto',
+        color: _light.labelTertiary,
+        fontSize: 20,
+        height: 1.6),
+    labelLarge: TextStyle(
+        fontFamily: 'Roboto',
+        color: _light.labelPrimary,
+        fontSize: 20,
+        height: 1.6),
+    labelMedium: TextStyle(fontFamily: 'Roboto', color: _light.labelPrimary),
+    labelSmall: TextStyle(fontFamily: 'Roboto', color: _light.labelPrimary),
     bodyLarge: TextStyle(
+      fontFamily: 'Roboto',
       color: _light.labelPrimary,
       fontSize: 16,
       height: 1.25,
       fontWeight: FontWeight.w400,
     ),
     bodyMedium: TextStyle(
+      fontFamily: 'Roboto',
       color: _light.labelPrimary,
       fontSize: 14,
       height: 1.4,
       fontWeight: FontWeight.w400,
     ),
-    bodySmall: TextStyle(color: _light.labelTertiary),
+    bodySmall: TextStyle(fontFamily: 'Roboto', color: _light.labelTertiary),
   ),
   cardTheme: CardTheme(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -101,6 +113,7 @@ final ThemeData lightTheme = ThemeData(
     style: TextButton.styleFrom(
       primary: _light.colorBlue,
       textStyle: const TextStyle(
+        fontFamily: 'Roboto',
         fontSize: 14,
         height: 1.7,
         fontWeight: FontWeight.w500,

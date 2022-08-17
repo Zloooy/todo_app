@@ -1,16 +1,21 @@
-# todo_app
+# Done
+Приложение для отслеживания задач.
 
-A new Flutter project.
+[Загрузить apk](https://github.com/Zloooy/todo_app/releases/download/0.0.1-alpha/app-release.apk)
 
-## Getting Started
+## Screenshots
 
-This project is a starting point for a Flutter application.
+![task_list](./screenshots/task_list.png)
+![task_edit](./screenshots/task_edit.png)
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+* Отображение списка задач, фильтрация несделанных задач.
+* Изменение и удаление задач из списка задач через свайпы, добавление новой задачи через последний элемент списка.
+* Подробный просмотр информации о задаче на экране редактирования задачи.
+* Изменение, сохранение и удаление задачи на экране редактирования задачи.
+* Хранение данных приложения оффлайн
+* Синхронизация данных приложения с сервером при наличии указанного в файле *credentials.env* токена авторизации *TOKEN*
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Work in progress
+* Работа с Firebase
