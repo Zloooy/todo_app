@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
-import 'package:todo_app/features/task_list/presentation/bloc/task_list_state.dart';
+import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_state.dart';
 part 'task_list_event.dart';
 
 class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {

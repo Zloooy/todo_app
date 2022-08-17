@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
 import 'package:todo_app/core/presentation/navigation/navigator_service.dart';
-import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc.dart';
-import 'package:todo_app/features/task_list/presentation/bloc/task_list_state.dart';
-import 'package:todo_app/features/task_list/presentation/widgets/new_item.dart';
+import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_bloc.dart';
+import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_state.dart';
+import 'package:todo_app/features/task_list/presentation/widgets/add_task.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/task_list_header_delegate.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/task_list_item.dart';
 
@@ -46,18 +46,12 @@ class TaskList extends StatelessWidget {
                                                     .add(ChangeTaskDoneEvent(
                                                         task: state.tasks[i],
                                                         done: done)),
-                                            onDelete: () =>
-                                                BlocProvider.of<TaskListBloc>(
-                                                        context)
-                                                    .add(DeleteTaskEvent(
-                                                        state.tasks[i])),
+                                            onDelete: () => BlocProvider.of<
+                                                    TaskListBloc>(context)
+                                                .add(
+                                                    DeleteTaskEvent(state.tasks[i])),
                                             task: state.tasks[i])
-                                        : AddTask(
-                                            onInputEnd: (text) =>
-                                                BlocProvider.of<TaskListBloc>(
-                                                        context)
-                                                    .add(CreateTaskEvent(text)),
-                                          ),
+                                        : AddTask(),
                                     childCount: state.tasks.length + 1,
                                   ),
                                 )
