@@ -54,5 +54,17 @@
     "dateNotDefined": "Не задана",
     "@dateNotDefined": {
         "type": "text"
+    },
+    "switchedToLightTheme": "Включена светлая тема",
+    "@switchedToLightTheme": {
+        "type": "text"
+    },
+    "switchedToDarkTheme": "Включена тёмная тема",
+    "@switchedToDarkTheme": {
+        "type": "text"
+    },
+    "switchedToSystemTheme": "Включена системная тема",
+    "@switchedToSystemTheme": {
+        "type": "text"
     }
 }

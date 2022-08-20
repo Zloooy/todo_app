@@ -163,7 +163,9 @@ class _TaskListItemState extends State<TaskListItem> {
               ? Text(AppLocalizations.of(context)!.date)
               : null,
           trailing: IconButton(
-            icon: const Icon(Icons.info_outline),
+            icon: Icon(
+              Icons.info_outline,
+            ),
             onPressed: widget.onInfoClick,
           ),
         ),

@@ -40,9 +40,15 @@ class _TaskEditState extends State<TaskEdit> {
   Widget build(BuildContext context) {
     final String? taskId =
         ModalRoute.of(context)!.settings.arguments as String?;
-    final contentUnderAppbarTheme =
-        Theme.of(context).appBarTheme.copyWith(elevation: 0);
-    final noContentUnderAppbarTheme = Theme.of(context).appBarTheme;
+    final noContentUnderAppbarTheme = Theme.of(context)
+        .appBarTheme
+        .copyWith(elevation: 0, color: Theme.of(context).colorScheme.primary);
+    final contentUnderAppbarTheme = Theme.of(context).appBarTheme.copyWith(
+        scrolledUnderElevation: 4,
+        shadowColor: Colors.black,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.surface
+            : Theme.of(context).colorScheme.primary);
     final AdditionalColors addititonalColors =
         Theme.of(context).extension<AdditionalColors>()!;
     return Theme(
@@ -59,6 +65,7 @@ class _TaskEditState extends State<TaskEdit> {
               builder: (context, state) {
             return Scaffold(
               appBar: AppBar(
+                elevation: 0,
                 toolbarHeight: 56,
                 leading: IconButton(
                     onPressed: () => Navigator.of(context).pop(),

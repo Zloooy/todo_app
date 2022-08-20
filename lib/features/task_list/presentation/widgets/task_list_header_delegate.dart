@@ -8,11 +8,13 @@ class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.doneCount,
     required this.showDone,
     required this.onSwitchShowDone,
+    required this.onSwitchTheme,
   });
 
   final int doneCount;
   final bool showDone;
   final VoidCallback onSwitchShowDone;
+  final VoidCallback onSwitchTheme;
   final double maxShrinkOffset = 50;
 
   @override
@@ -55,6 +57,7 @@ class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
                                     .extension<AdditionalColors>()!
                                     .blue),
                             child: VisibilityIcon(
+                              onLongPress: onSwitchTheme,
                               showDone: showDone,
                               onSwitchShowDone: onSwitchShowDone,
                             ),
@@ -85,6 +88,7 @@ class TaskListHeaderDelegate extends SliverPersistentHeaderDelegate {
                                 .extension<AdditionalColors>()!
                                 .blue),
                         child: VisibilityIcon(
+                            onLongPress: onSwitchTheme,
                             onSwitchShowDone: onSwitchShowDone,
                             showDone: showDone))
                   ],

@@ -2,12 +2,15 @@ import 'package:boxy/slivers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
+import 'package:todo_app/core/presentation/bloc/theme_bloc.dart';
 import 'package:todo_app/core/presentation/navigation/navigator_service.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_bloc.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_state.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/add_task.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/task_list_header_delegate.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/task_list_item.dart';
+import 'package:todo_app/core/presentation/bloc/theme_state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskList extends StatelessWidget {
   const TaskList({Key? key}) : super(key: key);
@@ -19,60 +22,71 @@ class TaskList extends StatelessWidget {
             TaskListBloc(RepositoryProvider.of<TaskRepository>(context)),
         child: BlocBuilder<TaskListBloc, TaskListState>(
             builder: (context, state) => Scaffold(
-                  body: CustomScrollView(
-                    slivers: [
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: TaskListHeaderDelegate(
-                          doneCount: state.doneCount,
-                          showDone: state.showDone,
-                          onSwitchShowDone: () =>
-                              BlocProvider.of<TaskListBloc>(context)
-                                  .add(SwitchDoneTaskVisibilityEvent()),
+                  body: BlocListener<ThemeBloc, ThemeState>(
+                    listener: (context, state) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(_switchThemeMessage(context, state.mode))));
+                    },
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: TaskListHeaderDelegate(
+                              doneCount: state.doneCount,
+                              showDone: state.showDone,
+                              onSwitchShowDone: () =>
+                                  BlocProvider.of<TaskListBloc>(context)
+                                      .add(SwitchDoneTaskVisibilityEvent()),
+                              onSwitchTheme: () =>
+                                  BlocProvider.of<ThemeBloc>(context)
+                                      .add(SwitchThemeEvent())),
                         ),
-                      ),
-                      SliverPadding(
-                        padding: const EdgeInsets.all(8),
-                        sliver: SliverCard(
-                          clipBehavior: Clip.antiAlias,
-                          sliver: state.loaded
-                              ? SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, i) => (i < state.tasks.length)
-                                        ? TaskListItem(
-                                            onChangeDone: (done) =>
+                        SliverPadding(
+                          padding: const EdgeInsets.all(8),
+                          sliver: SliverCard(
+                            clipBehavior: Clip.antiAlias,
+                            sliver: state.loaded
+                                ? SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                      (context, i) => (i < state.tasks.length)
+                                          ? TaskListItem(
+                                              onChangeDone: (done) =>
+                                                  BlocProvider.of<TaskListBloc>(
+                                                          context)
+                                                      .add(ChangeTaskDoneEvent(
+                                                          task: state.tasks[i],
+                                                          done: done)),
+                                              onDelete: () =>
+                                                  BlocProvider.of<TaskListBloc>(
+                                                          context)
+                                                      .add(DeleteTaskEvent(
+                                                          state.tasks[i])),
+                                              task: state.tasks[i],
+                                              onInfoClick: () async {
+                                                await NavigatorService
+                                                    .goToEditTask(
+                                                        state.tasks[i]);
                                                 BlocProvider.of<TaskListBloc>(
                                                         context)
-                                                    .add(ChangeTaskDoneEvent(
-                                                        task: state.tasks[i],
-                                                        done: done)),
-                                            onDelete: () =>
-                                                BlocProvider.of<TaskListBloc>(
-                                                        context)
-                                                    .add(DeleteTaskEvent(
-                                                        state.tasks[i])),
-                                            task: state.tasks[i],
-                                            onInfoClick: () async {
-                                              await NavigatorService
-                                                  .goToEditTask(state.tasks[i]);
-                                              BlocProvider.of<TaskListBloc>(
-                                                      context)
-                                                  .add(ReloadTaskListEvent());
-                                            },
-                                          )
-                                        : AddTask(),
-                                    childCount: state.tasks.length + 1,
-                                  ),
-                                )
-                              : const SliverFillRemaining(
-                                  child: Center(
-                                      child: SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircularProgressIndicator()))),
+                                                    .add(ReloadTaskListEvent());
+                                              },
+                                            )
+                                          : AddTask(),
+                                      childCount: state.tasks.length + 1,
+                                    ),
+                                  )
+                                : const SliverFillRemaining(
+                                    child: Center(
+                                        child: SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                            child:
+                                                CircularProgressIndicator()))),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   floatingActionButton: FloatingActionButton(
                     child: const Icon(Icons.add),
@@ -83,5 +97,16 @@ class TaskList extends StatelessWidget {
                     },
                   ),
                 )));
+  }
+
+  String _switchThemeMessage(BuildContext context, ThemeMode mode){
+    switch(mode){
+      case (ThemeMode.dark):
+      return AppLocalizations.of(context)!.switchedToDarkTheme;
+      case (ThemeMode.light):
+      return AppLocalizations.of(context)!.switchedToLightTheme;
+      case (ThemeMode.system):
+      return AppLocalizations.of(context)!.switchedToSystemTheme;
+    }
   }
 }
