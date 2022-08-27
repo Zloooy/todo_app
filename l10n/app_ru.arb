@@ -66,5 +66,25 @@
     "switchedToSystemTheme": "Включена системная тема",
     "@switchedToSystemTheme": {
         "type": "text"
+    },
+    "addressNotFound": "Адрес не найден",
+    "@addressNotFound": {
+        "type": "text"
+    },
+    "noConnection": "Нет подключения",
+    "@noConnection": {
+        "type": "text"
+    },
+    "noAuthorization" : "Нет авторизации",
+    "@noAuthorization": {
+        "type": "text"
+    },
+    "unknownError": "Неизвестная ошибка",
+    "@unknownError": {
+        "type": "text"
+    },
+    "revisionError": "Неправильная ревизия",
+    "@revisionError": {
+        "type": "text"
     }
 }
