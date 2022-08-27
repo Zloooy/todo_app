@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:todo_app/core/data/dto/converters/timestamp_converter.dart';
+import 'package:todo_app/core/data/dto/converters/nullable_timestamp_converter.dart';
 import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 part 'task_dto.freezed.dart';
@@ -19,6 +20,7 @@ class TaskDto with _$TaskDto {
     @HiveField(2)
         required Importance importance,
     @HiveField(3)
+    @NullableTimestampConverter()
         DateTime? deadline,
     @HiveField(4)
         required bool done,

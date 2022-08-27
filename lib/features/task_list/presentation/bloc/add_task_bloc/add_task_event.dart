@@ -14,3 +14,7 @@ class SubmitTextEvent extends AddTaskEvent {
   final String submittedText;
   const SubmitTextEvent({required this.submittedText});
 }
+
+class UnfocusTextEvent extends AddTaskEvent {
+  const UnfocusTextEvent();
+}

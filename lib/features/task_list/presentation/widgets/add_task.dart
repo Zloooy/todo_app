@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/add_task_bloc/add_task_bloc.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/add_task_bloc/add_task_state.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_bloc.dart';
+import 'package:todo_app/features/task_list/presentation/widgets/add_task_text_field.dart';
 
 class AddTask extends StatefulWidget {
   const AddTask({super.key});
@@ -13,16 +14,20 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
-  late TextEditingController _controller;
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
+
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -31,19 +36,28 @@ class _AddTaskState extends State<AddTask> {
         create: (context) =>
             AddTaskBloc(BlocProvider.of<TaskListBloc>(context)),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.all(
+            12,
+          ),
           child: ListTile(
             minLeadingWidth: 0,
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 4),
+                  padding: const EdgeInsets.only(right: 7),
                   child: BlocBuilder<AddTaskBloc, AddTaskState>(
                     builder: (context, state) {
                       return IconButton(
+                        iconSize: 20,
+                        visualDensity: VisualDensity.compact,
+                        constraints: BoxConstraints.loose(Size(20, 20)),
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.all(0),
                         onPressed: () => _onInputEnd(context)(state.text),
-                        icon: Icon(Icons.add),
+                        icon: Icon(
+                          Icons.add,
+                          ),
                       );
                     },
                   ),
@@ -52,41 +66,19 @@ class _AddTaskState extends State<AddTask> {
             ),
             title: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            BlocListener<AddTaskBloc, AddTaskState>(
-                              listener: (context, state) {
-                                if (state.text != _controller.text) {
-                                  setState(() => _controller.text = state.text);
-                                }
-                              },
-                              child: BlocBuilder<AddTaskBloc, AddTaskState>(
-                                builder: (context, state) {
-                                  return TextField(
-                                    key: UniqueKey(),
-                                    controller: _controller,
-                                    onSubmitted: _onInputEnd(context),
-                                    onChanged: (value) {
-                                      BlocProvider.of<AddTaskBloc>(context)
-                                          .add(ChangeTextEvent(newText: value));
-                                    },
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: AppLocalizations.of(context)!
-                                            .newTask),
-                                    maxLines: null,
-                                  );
-                                },
-                              ),
-                            ),
-                          ]),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          AddTaskTextField(controller: _controller),
+                        ],
+                      ),
                     ),
                   ],
                 ),

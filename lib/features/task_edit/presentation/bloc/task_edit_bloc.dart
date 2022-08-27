@@ -1,11 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:todo_app/core/data/enum/network_state.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 
 import 'task_edit_state.dart';
 part 'task_edit_event.dart';
 
+// TODO добавить вывод уведомлений о сетевых ошибках
 class TaskEditBloc extends Bloc<TaskEditEvent, TaskEditState> {
   final TaskRepository _repository;
   TaskEditBloc(
@@ -42,13 +44,13 @@ class TaskEditBloc extends Bloc<TaskEditEvent, TaskEditState> {
   Future<void> onSaveTaskEvent(
       SaveTaskEvent event, Emitter<TaskEditState> emit) async {
     if (state.task != null) {
-      bool saveSuccess;
+      NetworkState saveResult;
       if (state.taskId == null) {
-        saveSuccess = await _repository.addTask(state.task!);
+        saveResult = await _repository.addTask(state.task!);
       } else {
-        saveSuccess = await _repository.modifyTask(state.task!);
+        saveResult = await _repository.modifyTask(state.task!);
       }
-      if (saveSuccess) {
+      if (saveResult == NetworkState.SUCCESS) {
         emit(state.copyWith(taskId: state.task!.id, modified: false));
       }
     }

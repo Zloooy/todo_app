@@ -113,7 +113,11 @@ class _TaskListItemState extends State<TaskListItem> {
                           child: checkbox,
                         ),
                       )
-                    : SizedBox(width: 14, height: 17, child: checkbox),
+                    : SizedBox(
+                        width: 14,
+                        height: 17,
+                        child: checkbox,
+                      ),
               ),
             ],
           ),
@@ -139,14 +143,15 @@ class _TaskListItemState extends State<TaskListItem> {
                                       right: 6,
                                     ),
                                     child: PrioritySign(
-                                        importance: widget.task.importance),
+                                        importance: widget.task.importance,),
                                   ),
                                 ),
                               TextSpan(
-                                  style: _isDone
-                                      ? scratchTextStyle
-                                      : regularTextStyle,
-                                  text: widget.task.text),
+                                style: _isDone
+                                    ? scratchTextStyle
+                                    : regularTextStyle,
+                                text: widget.task.text,
+                              ),
                             ],
                           ),
                           maxLines: 3,

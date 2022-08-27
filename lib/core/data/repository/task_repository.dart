@@ -4,7 +4,9 @@ import 'package:logging/logging.dart';
 import 'package:todo_app/core/data/data_source/local_data_source.dart';
 import 'package:todo_app/core/data/data_source/network_task_data_source.dart';
 import 'package:todo_app/core/data/dto/last_known_revision_wrapper.dart';
+import 'package:todo_app/core/data/dto/network_state_wrapper.dart';
 import 'package:todo_app/core/data/dto/task_dto.dart';
+import 'package:todo_app/core/data/enum/network_state.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 
 final Logger _log = Logger('TaskRepository');
@@ -34,15 +36,7 @@ class TaskRepository {
     return null;
   }
 
-  Future<bool> updateTasks() {
-    if (unsyncedTasks.isNotEmpty) {
-      return _tryPushTasksToServer();
-    } else {
-      return _tryPullTasksFromServer();
-    }
-  }
-
-  Future<bool> addTask(TaskEntity taskEntity) async {
+  Future<NetworkState> addTask(TaskEntity taskEntity) async {
     try {
       await updateTasks();
       final DateTime creationTime = DateTime.now();
@@ -51,70 +45,83 @@ class TaskRepository {
         createdAt: creationTime, changedAt: creationTime,
         lastUpdatedBy: '0', // TODO Разобраться с форматом
       );
-      final networkTaskDto = await _networkDS.createTask(
+      final networkTaskResponse = await _networkDS.createTask(
         LastKnownRevisionWrapper(
           value: taskDto,
-          lastKnownRevision: _localDS.lastKnownRevision + 1,
+          lastKnownRevision: _localDS.lastKnownRevision,
         ),
       );
-      await _localDS.addOrUpdateTask(networkTaskDto ?? taskDto);
-      if (networkTaskDto != null) {
+      final TaskDto taskToAdd =
+          (networkTaskResponse.state == NetworkState.SUCCESS
+                  ? networkTaskResponse.value
+                  : null) ??
+              taskDto;
+      await _localDS.addOrUpdateTask(taskToAdd);
+      if (networkTaskResponse.state == NetworkState.SUCCESS) {
         await _localDS.setLastKnownRevision(_localDS.lastKnownRevision + 1);
-        await _localDS.setLastSyncTime(networkTaskDto.createdAt);
+        await _localDS.setLastSyncTime(networkTaskResponse.value!.createdAt);
       }
-      return true;
+      return networkTaskResponse.state;
     } catch (e) {
-      return false;
+      return NetworkState.UNKNOWN_ERROR;
     }
   }
 
-  Future<bool> modifyTask(TaskEntity task) async {
+  Future<NetworkState> modifyTask(TaskEntity task) async {
     await updateTasks();
     final prevTask = await _localDS.findTaskById(task.id);
     if (prevTask == null) {
       // TODO Кинуть ошибку, такого быть не должно
       _log.severe('Trying to update non-existent task');
-      return false;
+      return NetworkState.UNKNOWN_ERROR;
     } else {
       final newTask = prevTask.updateFromEntity(task);
       final DateTime syncTime = DateTime.now();
       // TODO разобраться с 301 ошибкой
       final result = await _networkDS.modifyTask(
         LastKnownRevisionWrapper(
-          lastKnownRevision: _localDS.lastKnownRevision + 1,
+          lastKnownRevision: _localDS.lastKnownRevision,
           value: newTask,
         ),
       );
-      if (result != null) {
+      if (result.state == NetworkState.SUCCESS) {
         await _localDS.setLastKnownRevision(_localDS.lastKnownRevision + 1);
         await _localDS.setLastSyncTime(syncTime);
       }
-      await _localDS.addOrUpdateTask(result ?? newTask);
-      return true;
+      final TaskDto taskToAdd =
+          (result.state == NetworkState.SUCCESS ? result.value : null) ??
+              newTask;
+      await _localDS.addOrUpdateTask(taskToAdd);
+      return result.state;
     }
   }
 
-  Future<bool> deleteTask(String id) async {
-    await this.updateTasks();
-    final taskToDelete = await this._localDS.findTaskById(id);
-    if (taskToDelete != null) {
-      final DateTime deleteTime = DateTime.now();
-      final result = await _networkDS.deleteTask(
-        LastKnownRevisionWrapper(
-          lastKnownRevision: _localDS.lastKnownRevision + 1,
+  Future<NetworkState> deleteTask(String id) async {
+    try {
+      await updateTasks();
+      final taskToDelete = await this._localDS.findTaskById(id);
+      if (taskToDelete != null) {
+        final DateTime deleteTime = DateTime.now();
+        final result = (await _networkDS.deleteTask(LastKnownRevisionWrapper(
+          lastKnownRevision: _localDS.lastKnownRevision,
           value: taskToDelete,
-        ),
-      );
-      if (result) {
-        await _localDS.setLastKnownRevision(_localDS.lastKnownRevision + 1);
-        await _localDS.setLastSyncTime(deleteTime);
+        )));
+        if (result == NetworkState.SUCCESS) {
+          await _localDS.setLastKnownRevision(_localDS.lastKnownRevision + 1);
+          await _localDS.setLastSyncTime(deleteTime);
+        } else if (result != NetworkState.NOT_FOUND) {
+          await this
+              ._localDS
+              .setTaskIdsToDelete([...this._localDS.taskIdsToDelete, id]);
+        }
+        await _localDS.deleteTask(id);
+        return result;
       }
-      await _localDS.deleteTask(id);
-      return true;
+      return NetworkState.NOT_FOUND;
+    } catch (e) {
+      _log.severe(e);
+      return NetworkState.UNKNOWN_ERROR;
     }
-    return false;
-    // TODO добавить запись удалённых локально, но не синхронизированных
-    // задач с попыткой из затирания в updateTasks
   }
 
   List<TaskDto> get unsyncedTasks {
@@ -129,52 +136,89 @@ class TaskRepository {
         .toList();
   }
 
-  Future<bool> _tryPushTasksToServer() async {
-    List<TaskDto> unsyncedTasks = this.unsyncedTasks;
-    if (unsyncedTasks.isNotEmpty) {
-      DateTime operationTime = DateTime.now();
-      final result = await _networkDS.updateAllTasks(
-        LastKnownRevisionWrapper(
-          value: _localDS.getAllTasks(),
-          lastKnownRevision: _localDS.lastKnownRevision + 1,
-        ),
-      );
-      if (result != null) {
-        await _localDS.setLastSyncTime(operationTime);
-        await _localDS.setLastKnownRevision(result.lastKnownRevision);
-        await _localDS.updateAllTasks(result.value);
-        return true;
+  List<String> get taskIdsToDelete => _localDS.taskIdsToDelete;
+
+  bool get hasUnsyncedInfo =>
+      unsyncedTasks.isNotEmpty || taskIdsToDelete.isNotEmpty;
+
+  Future<NetworkState> updateTasks() async {
+    try {
+      if (!this.hasUnsyncedInfo) {
+        DateTime operationTime = DateTime.now();
+        final networkResponse = await _networkDS.getAllTasks();
+        if (networkResponse.state == NetworkState.SUCCESS) {
+          await _localDS.updateAllTasks(networkResponse.value!.value);
+          await _localDS
+              .setLastKnownRevision(networkResponse.value!.lastKnownRevision);
+          await _localDS.setLastSyncTime(operationTime);
+        }
+        return networkResponse.state;
+      } else {
+        final taskListNetworkResponse = await _networkDS.getAllTasks();
+        if (taskListNetworkResponse.state == NetworkState.SUCCESS) {
+          final remoteRevision =
+              taskListNetworkResponse.value!.lastKnownRevision;
+          List<TaskDto> tasksToPush =
+              (remoteRevision <= this._localDS.lastKnownRevision)
+                  ? this._localDS.getAllTasks()
+                  : _mergeRemoteTasks(
+                      taskListNetworkResponse.value!.value,
+                      this._localDS.getAllTasks(),
+                      this._localDS.taskIdsToDelete,
+                    );
+          final DateTime operationTime = DateTime.now();
+          final NetworkStateWrapper<LastKnownRevisionWrapper<List<TaskDto>>?>
+              pushTasksNetworkResponse =
+              await this._networkDS.updateAllTasks(LastKnownRevisionWrapper(
+                    value: tasksToPush,
+                    lastKnownRevision: remoteRevision,
+                  ));
+          if (pushTasksNetworkResponse.state == NetworkState.SUCCESS) {
+            await this._localDS.setLastKnownRevision(
+                pushTasksNetworkResponse.value!.lastKnownRevision);
+            await this._localDS.setLastSyncTime(operationTime);
+            await this
+                ._localDS
+                .updateAllTasks(pushTasksNetworkResponse.value!.value);
+            await this._localDS.setTaskIdsToDelete([]);
+          }
+          return pushTasksNetworkResponse.state;
+        }
+        return taskListNetworkResponse.state;
       }
-      // TODO добавить возвращение ошибок ревизии из NetworkDataSource и
-      // их разрешение - получение последней ревизии с сервера и её слияние с текущей.
-      // Решить, что делать с дублями.
-      return false;
+    } catch (e) {
+      return NetworkState.UNKNOWN_ERROR;
     }
-    return true;
   }
 
-  Future<bool> _tryPullTasksFromServer() async {
-    final response = await _networkDS.getAllTasks();
-    if (response != null) {
-      if (response.lastKnownRevision < _localDS.lastKnownRevision) {
-        // TODO кинуть ошибку, такого быть не должно
-        _log.severe('Response revision smaller than local');
-        return true;
-      } else {
-        if (response.lastKnownRevision > _localDS.lastKnownRevision) {
-          DateTime requestTime = DateTime.now();
-          List<TaskDto> unsyncedTasks = this.unsyncedTasks;
-          if (unsyncedTasks.isEmpty) {
-            _localDS.updateAllTasks(response.value);
-            _localDS.setLastKnownRevision(response.lastKnownRevision);
-            _localDS.setLastSyncTime(requestTime);
-            return true;
-          } else {
-            // TODO Добавить слияние
-          }
-        }
+  static List<TaskDto> _mergeRemoteTasks(
+      List<TaskDto> remote, List<TaskDto> local, List<String> taskIdsToDelete) {
+    remote = remote
+        .where((element) => !taskIdsToDelete.contains(element.id))
+        .toList();
+    return [...local, ...remote].fold(<TaskDto>[],
+        (List<TaskDto> previousValue, TaskDto currElement) {
+      final TaskDto? otherElement = _firstWhereOrNull(
+          previousValue, (element) => currElement.id == element.id);
+      if (otherElement != null) {
+        previousValue.removeWhere((element) => currElement.id == element.id);
+        currElement = _pickNewest(currElement, otherElement);
       }
-    }
-    return false;
+      return [...previousValue, currElement];
+    });
   }
+
+  static T? _firstWhereOrNull<T>(List<T> list, bool Function(T) checker) {
+    try {
+      return list.firstWhere(checker);
+    } on StateError catch (e) {
+      return null;
+    }
+  }
+
+  static TaskDto _pickNewest(TaskDto first, TaskDto second) =>
+      first.changedAt.microsecondsSinceEpoch >=
+              second.changedAt.millisecondsSinceEpoch
+          ? first
+          : second;
 }

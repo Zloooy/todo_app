@@ -10,6 +10,11 @@ class AddTaskBloc extends Bloc<AddTaskEvent, AddTaskState> {
   AddTaskBloc(this.taskListBloc) : super(AddTaskState(text: '')) {
     on<ChangeTextEvent>(onChangeText);
     on<SubmitTextEvent>(onSubmitText);
+    on<UnfocusTextEvent>(onUnfocusText);
+  }
+
+  void createTask(String taskText) {
+    this.taskListBloc.add(CreateTaskEvent(taskText));
   }
 
   Future<void> onChangeText(
@@ -25,7 +30,13 @@ class AddTaskBloc extends Bloc<AddTaskEvent, AddTaskState> {
     SubmitTextEvent event,
     Emitter<AddTaskState> emit,
   ) async {
-    this.taskListBloc.add(CreateTaskEvent(event.submittedText));
+    createTask(event.submittedText);
+    emit(state.copyWith(text: ''));
+  }
+
+  Future<void> onUnfocusText(
+      UnfocusTextEvent event, Emitter<AddTaskState> emit) async {
+    createTask(state.text);
     emit(state.copyWith(text: ''));
   }
 }
