@@ -20,28 +20,27 @@ class TodoRouterDelegate extends RouterDelegate<TodoRouteInformation>
   final FirebaseAnalyticsObserver _analyticsObserver;
   final StreamController<Null> _popController;
 
-  TodoRouterDelegate({required NavigationBloc bloc, required FirebaseAnalyticsObserver analyticsObserver})
+  TodoRouterDelegate(
+      {required NavigationBloc bloc,
+      required FirebaseAnalyticsObserver analyticsObserver})
       : _bloc = bloc,
         _navigatorKey = GlobalKey(),
         _analyticsObserver = analyticsObserver,
-       _popController = new StreamController<Null>.broadcast();
+        _popController = new StreamController<Null>.broadcast();
 
   @override
   GlobalKey<NavigatorState>? get navigatorKey => _navigatorKey;
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<NavigationBloc, NavigationState>(
-          builder: (context, state) {
-            return Navigator(
-                key: _navigatorKey,
-                observers: [_analyticsObserver],
-                pages: state.history.map(_buildPageByRouteInformation).toList(),
-                onPopPage: _onPopPage,
-              );
-              }
-              );
-    
+      BlocBuilder<NavigationBloc, NavigationState>(builder: (context, state) {
+        return Navigator(
+          key: _navigatorKey,
+          observers: [_analyticsObserver],
+          pages: state.history.map(_buildPageByRouteInformation).toList(),
+          onPopPage: _onPopPage,
+        );
+      });
 
   bool _onPopPage(Route<Object?> route, Object? result) {
     if (!route.didPop(result)) {
@@ -52,30 +51,25 @@ class TodoRouterDelegate extends RouterDelegate<TodoRouteInformation>
     return true;
   }
 
-
-  Page<Object?> _buildPageByRouteInformation(
-      TodoRouteInformation information) {
+  Page<Object?> _buildPageByRouteInformation(TodoRouteInformation information) {
     _log.info('building page by information $information');
     if (information.taskList) {
       return MaterialPage(
-        name: '/tasks/',
-        child: TaskList(
-        openTask: (String? taskId) async {
-          _bloc.add(OpenTaskEvent(taskId));
-           await _popController.stream.first;
-          }
-      ));
+          name: '/tasks/',
+          child: TaskList(openTask: (String? taskId) async {
+            _bloc.add(OpenTaskEvent(taskId));
+            await _popController.stream.first;
+          }));
     }
     if (information.notFound) {
-      return MaterialPage(
-        name: '/404/',
-        child: NotFound()
-        );
+      return MaterialPage(name: '/404/', child: NotFound());
     }
     return MaterialPage(
         name: '/tasks/{id}',
-        child: TaskEdit(id: information.taskId, text: information.text,
-        notFound: ()=>_bloc.add(NotFoundEvent()),
+        child: TaskEdit(
+          id: information.taskId,
+          text: information.text,
+          notFound: () => _bloc.add(NotFoundEvent()),
         ));
   }
 
@@ -83,7 +77,5 @@ class TodoRouterDelegate extends RouterDelegate<TodoRouteInformation>
   TodoRouteInformation? get currentConfiguration => _bloc.state.history.last;
 
   @override
-  Future<void> setNewRoutePath(TodoRouteInformation information) async {
-  }
-
+  Future<void> setNewRoutePath(TodoRouteInformation information) async {}
 }

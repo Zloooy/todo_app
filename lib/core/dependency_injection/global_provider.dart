@@ -18,7 +18,6 @@ import 'package:todo_app/firebase_options.dart';
 import 'package:uni_links/uni_links.dart';
 
 class GlobalProvider extends StatelessWidget {
-
   final GlobalProviderDependencyContainer dependencies;
   final Widget app;
 
@@ -30,57 +29,55 @@ class GlobalProvider extends StatelessWidget {
     super.key,
   });
 
-
   static Future<GlobalProviderDependencyContainer> initedDependencies() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Future.wait<Object?>([
       LocalTaskDataSource.init(),
       dotenv.load(fileName: _credentials_asset),
-      Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform
-      )
+      Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
     ]);
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-    print(
-        '${record.loggerName}:\t${record.level.name}\t${record.time}\t${record.message}');
+      print(
+          '${record.loggerName}:\t${record.level.name}\t${record.time}\t${record.message}');
     });
     String? initialLink = await getInitialLink();
     final informationParser = TodoRouteInformationParser();
     final RouteInformation? toParse = RouteInformation(location: initialLink);
-    final TodoRouteInformation? info = (toParse != null) ? await informationParser.parseRouteInformation(toParse) : null;
-    final FirebaseAnalyticsObserver firebaseAnalyticsObserver = FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
+    final TodoRouteInformation? info = (toParse != null)
+        ? await informationParser.parseRouteInformation(toParse)
+        : null;
+    final FirebaseAnalyticsObserver firebaseAnalyticsObserver =
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
     return GlobalProviderDependencyContainer(
-      initialRouteInformation: info,
-      routeInformationParser: informationParser,
-      firebaseAnalyticsObserver: firebaseAnalyticsObserver
-    );
+        initialRouteInformation: info,
+        routeInformationParser: informationParser,
+        firebaseAnalyticsObserver: firebaseAnalyticsObserver);
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<TaskRepository>(
-            create: (context) => TaskRepository(
-                localTaskDataSource: LocalTaskDataSource(),
-                networkTaskDataSource: NetworkTaskDataSource())),
-      ],
-      child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => ThemeBloc(),
-          ),
-          BlocProvider(
-            create: (context) => NavigationBloc(
-              initialInformation: dependencies.initialRouteInformation,
-            informationParser: dependencies.routeInformationParser,
-            ),
-          )
+          RepositoryProvider<TaskRepository>(
+              create: (context) => TaskRepository(
+                  localTaskDataSource: LocalTaskDataSource(),
+                  networkTaskDataSource: NetworkTaskDataSource())),
         ],
-        child: app,
-      )
-    );
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => ThemeBloc(),
+            ),
+            BlocProvider(
+              create: (context) => NavigationBloc(
+                initialInformation: dependencies.initialRouteInformation,
+                informationParser: dependencies.routeInformationParser,
+              ),
+            )
+          ],
+          child: app,
+        ));
   }
 }

@@ -13,7 +13,8 @@ class TaskEditBloc extends Bloc<TaskEditEvent, TaskEditState> {
   TaskEditBloc(
       {required String? taskId, required TaskRepository taskRepository})
       : _repository = taskRepository,
-        super(TaskEditState(taskId: taskId, loaded: false, modified: false, notFound: false)) {
+        super(TaskEditState(
+            taskId: taskId, loaded: false, modified: false, notFound: false)) {
     on<LoadTaskEvent>(onLoadTaskEvent);
     on<ModifyTaskEvent>(onModifyTaskEvent);
     on<SaveTaskEvent>(onSaveTaskEvent);
@@ -35,7 +36,8 @@ class TaskEditBloc extends Bloc<TaskEditEvent, TaskEditState> {
       task = TaskEntity.blank();
       modified = true;
     }
-    emit(state.copyWith(task: task, loaded: true, modified: modified, notFound: notFound));
+    emit(state.copyWith(
+        task: task, loaded: true, modified: modified, notFound: notFound));
   }
 
   Future<void> onModifyTaskEvent(

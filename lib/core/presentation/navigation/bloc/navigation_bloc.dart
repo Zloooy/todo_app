@@ -11,12 +11,14 @@ import 'package:uni_links/uni_links.dart';
 part 'navigation_event.dart';
 
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
-
   final TodoRouteInformationParser informationParser;
   late final StreamSubscription<Uri?>? uriLinkSubscription;
 
-  NavigationBloc({TodoRouteInformation? initialInformation, required this.informationParser}) :
-  super(NavigationState(history: constructDeepLinkHistory(initialInformation))) {
+  NavigationBloc(
+      {TodoRouteInformation? initialInformation,
+      required this.informationParser})
+      : super(NavigationState(
+            history: constructDeepLinkHistory(initialInformation))) {
     on<PopEvent>(onPop);
     on<OpenTaskEvent>(onOpenTask);
     on<DeepLinkEvent>(onDeepLink);
@@ -27,21 +29,26 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     }
   }
 
-
   Future<void> onPop(PopEvent event, Emitter<NavigationState> emit) async {
     if (state.history.length != 1) {
-      emit(state.copyWith(history: state.history.sublist(0, state.history.length - 1)));
+      emit(state.copyWith(
+          history: state.history.sublist(0, state.history.length - 1)));
     }
   }
 
-  Future<void> onOpenTask(OpenTaskEvent event, Emitter<NavigationState> emit) async {
-    final newHistory = [...state.history,
-      TodoRouteInformation.task(id: event.id),];
-    emit(state.copyWith(history: newHistory ));
+  Future<void> onOpenTask(
+      OpenTaskEvent event, Emitter<NavigationState> emit) async {
+    final newHistory = [
+      ...state.history,
+      TodoRouteInformation.task(id: event.id),
+    ];
+    emit(state.copyWith(history: newHistory));
   }
 
-  Future<void> onDeepLink(DeepLinkEvent event, Emitter<NavigationState> emit) async {
-    TodoRouteInformation todoInfo = await informationParser.parseRouteInformation(event.information);
+  Future<void> onDeepLink(
+      DeepLinkEvent event, Emitter<NavigationState> emit) async {
+    TodoRouteInformation todoInfo =
+        await informationParser.parseRouteInformation(event.information);
     emit(state.copyWith(
       history: constructDeepLinkHistory(todoInfo),
     ));
@@ -53,26 +60,25 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     super.close();
   }
 
-  static List<TodoRouteInformation> constructDeepLinkHistory(TodoRouteInformation? deepLink) {
+  static List<TodoRouteInformation> constructDeepLinkHistory(
+      TodoRouteInformation? deepLink) {
     return [
-    if (!(deepLink?.taskList ?? true)) TodoRouteInformation.list(),
-    deepLink ?? TodoRouteInformation.list()
+      if (!(deepLink?.taskList ?? true)) TodoRouteInformation.list(),
+      deepLink ?? TodoRouteInformation.list()
     ];
   }
 
-  void handleDeepLinkUri(Uri? uri){
-      final RouteInformation toParse = RouteInformation(
-        location: uri?.toString()
-      );
-      this.add(DeepLinkEvent(
-        information: toParse,
-      ));
-    }
+  void handleDeepLinkUri(Uri? uri) {
+    final RouteInformation toParse =
+        RouteInformation(location: uri?.toString());
+    this.add(DeepLinkEvent(
+      information: toParse,
+    ));
+  }
 
   Future<void> onNotFound(
-    NotFoundEvent event,
-    Emitter<NavigationState> emit
-  ) async {
-    emit(state.copyWith(history: constructDeepLinkHistory(TodoRouteInformation.notFound())));
+      NotFoundEvent event, Emitter<NavigationState> emit) async {
+    emit(state.copyWith(
+        history: constructDeepLinkHistory(TodoRouteInformation.notFound())));
   }
 }

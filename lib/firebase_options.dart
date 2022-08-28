@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '50391082248',
     projectId: 'done-task-app',
     storageBucket: 'done-task-app.appspot.com',
-    iosClientId: '50391082248-j5lb82bara9t0bmm9rav7224nc1he2l3.apps.googleusercontent.com',
+    iosClientId:
+        '50391082248-j5lb82bara9t0bmm9rav7224nc1he2l3.apps.googleusercontent.com',
     iosBundleId: 'com.example.todoApp',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '50391082248',
     projectId: 'done-task-app',
     storageBucket: 'done-task-app.appspot.com',
-    iosClientId: '50391082248-j5lb82bara9t0bmm9rav7224nc1he2l3.apps.googleusercontent.com',
+    iosClientId:
+        '50391082248-j5lb82bara9t0bmm9rav7224nc1he2l3.apps.googleusercontent.com',
     iosBundleId: 'com.example.todoApp',
   );
 }

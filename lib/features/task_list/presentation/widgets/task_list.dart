@@ -95,7 +95,8 @@ class TaskList extends StatelessWidget {
                                                 ),
                                                 task: state.tasks[i],
                                                 onInfoClick: () async {
-                                                  await openTask(state.tasks[i].id);
+                                                  await openTask(
+                                                      state.tasks[i].id);
                                                   BlocProvider.of<TaskListBloc>(
                                                     context,
                                                   ).add(

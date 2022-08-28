@@ -12,15 +12,19 @@ import 'package:todo_app/core/presentation/navigation/todo_router_delegate.dart'
 import 'package:todo_app/core/presentation/themes/themes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 const _kShouldTestAsyncErrorOnInit = false;
 const _kTestingCrashlytics = true;
 void main() {
- runZonedGuarded(() async {
-  GlobalProviderDependencyContainer dependencies = await GlobalProvider.initedDependencies();
-  runApp(TodoApp(dependencies: dependencies,));
- }, ((error, stack) {
-   FirebaseCrashlytics.instance.recordError(error, stack);
- }));
+  runZonedGuarded(() async {
+    GlobalProviderDependencyContainer dependencies =
+        await GlobalProvider.initedDependencies();
+    runApp(TodoApp(
+      dependencies: dependencies,
+    ));
+  }, ((error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack);
+  }));
 }
 
 class TodoApp extends StatelessWidget {
@@ -33,27 +37,27 @@ class TodoApp extends StatelessWidget {
     return GlobalProvider(
       dependencies: dependencies,
       app: BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, state) {
-            return MaterialApp.router(
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate
-              ],
-              supportedLocales: const [Locale('ru', '')],
-              title: 'Done',
-              theme: lightTheme,
-              darkTheme: darkTheme,
-              themeMode: state.mode,
-                routerDelegate: TodoRouterDelegate(
-                  bloc: BlocProvider.of<NavigationBloc>(context),
-                  analyticsObserver: dependencies.firebaseAnalyticsObserver
-                  ),
-              routeInformationParser: dependencies.routeInformationParser,
-            );
-          },
-        ),
+        builder: (context, state) {
+          return MaterialApp.router(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate
+            ],
+            supportedLocales: const [Locale('ru', '')],
+            title: 'Done',
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            themeMode: state.mode,
+            routerDelegate: TodoRouterDelegate(
+              bloc: BlocProvider.of<NavigationBloc>(context),
+              analyticsObserver: dependencies.firebaseAnalyticsObserver,
+            ),
+            routeInformationParser: dependencies.routeInformationParser,
+          );
+        },
+      ),
     );
   }
 }

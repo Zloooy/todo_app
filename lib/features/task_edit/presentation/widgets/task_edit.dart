@@ -13,13 +13,14 @@ import 'package:todo_app/features/task_edit/presentation/bloc/task_edit_state.da
 import 'package:todo_app/features/task_edit/presentation/widgets/dropdown_list.dart';
 
 final Logger _log = Logger('TaskEdit');
-class TaskEdit extends StatefulWidget {
 
+class TaskEdit extends StatefulWidget {
   final String? id;
   final String? text;
   final VoidCallback notFound;
 
-  const TaskEdit({required this.id, required this.notFound, this.text, super.key});
+  const TaskEdit(
+      {required this.id, required this.notFound, this.text, super.key});
 
   @override
   State<TaskEdit> createState() => _TaskEditState();
@@ -51,11 +52,12 @@ class _TaskEditState extends State<TaskEdit> {
         .appBarTheme
         .copyWith(elevation: 0, color: Theme.of(context).colorScheme.primary);
     final contentUnderAppbarTheme = Theme.of(context).appBarTheme.copyWith(
-        scrolledUnderElevation: 4,
-        shadowColor: Colors.black,
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Theme.of(context).colorScheme.surface
-            : Theme.of(context).colorScheme.primary,);
+          scrolledUnderElevation: 4,
+          shadowColor: Colors.black,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).colorScheme.surface
+              : Theme.of(context).colorScheme.primary,
+        );
     final AdditionalColors addititonalColors =
         Theme.of(context).extension<AdditionalColors>()!;
     return Theme(
@@ -68,15 +70,13 @@ class _TaskEditState extends State<TaskEdit> {
           create: (context) => TaskEditBloc(
               taskId: widget.id,
               //TODO add text
-              taskRepository: RepositoryProvider.of<TaskRepository>(context)
-              ),
+              taskRepository: RepositoryProvider.of<TaskRepository>(context)),
           child: BlocConsumer<TaskEditBloc, TaskEditState>(
               listener: (context, state) {
-                if (state.loaded && state.notFound){
-                  widget.notFound();
-                }
-              },
-              builder: (context, state) {
+            if (state.loaded && state.notFound) {
+              widget.notFound();
+            }
+          }, builder: (context, state) {
             return Scaffold(
               appBar: AppBar(
                 elevation: 0,
