@@ -167,7 +167,8 @@ class _TaskEditState extends State<TaskEdit> {
                                       ? Text(
                                           style: TextStyle(
                                               color: addititonalColors.blue),
-                                          DateFormatter.formatDate(state.task!.deadline!))
+                                          DateFormatter.formatDate(
+                                              state.task!.deadline!))
                                       : Text(AppLocalizations.of(context)!
                                           .dateNotDefined),
                                   trailing: Switch(
