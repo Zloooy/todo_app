@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
@@ -16,11 +17,13 @@ class TodoRouterDelegate extends RouterDelegate<TodoRouteInformation>
     with PopNavigatorRouterDelegateMixin<TodoRouteInformation>, ChangeNotifier {
   final GlobalKey<NavigatorState> _navigatorKey;
   final NavigationBloc _bloc;
+  final FirebaseAnalyticsObserver _analyticsObserver;
   final StreamController<Null> _popController;
 
-  TodoRouterDelegate({required NavigationBloc bloc})
+  TodoRouterDelegate({required NavigationBloc bloc, required FirebaseAnalyticsObserver analyticsObserver})
       : _bloc = bloc,
         _navigatorKey = GlobalKey(),
+        _analyticsObserver = analyticsObserver,
        _popController = new StreamController<Null>.broadcast();
 
   @override
@@ -32,6 +35,7 @@ class TodoRouterDelegate extends RouterDelegate<TodoRouteInformation>
           builder: (context, state) {
             return Navigator(
                 key: _navigatorKey,
+                observers: [_analyticsObserver],
                 pages: state.history.map(_buildPageByRouteInformation).toList(),
                 onPopPage: _onPopPage,
               );
@@ -53,7 +57,9 @@ class TodoRouterDelegate extends RouterDelegate<TodoRouteInformation>
       TodoRouteInformation information) {
     _log.info('building page by information $information');
     if (information.taskList) {
-      return MaterialPage(child: TaskList(
+      return MaterialPage(
+        name: '/tasks/',
+        child: TaskList(
         openTask: (String? taskId) async {
           _bloc.add(OpenTaskEvent(taskId));
            await _popController.stream.first;
@@ -61,9 +67,13 @@ class TodoRouterDelegate extends RouterDelegate<TodoRouteInformation>
       ));
     }
     if (information.notFound) {
-      return MaterialPage(child: NotFound());
+      return MaterialPage(
+        name: '/404/',
+        child: NotFound()
+        );
     }
     return MaterialPage(
+        name: '/tasks/{id}',
         child: TaskEdit(id: information.taskId, text: information.text,
         notFound: ()=>_bloc.add(NotFoundEvent()),
         ));

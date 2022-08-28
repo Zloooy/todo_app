@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "50391082248",
+    "project_id": "done-task-app",
+    "storage_bucket": "done-task-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50391082248:android:ea3709a7808aae1911b8bd",
+        "android_client_info": {
+          "package_name": "com.example.todo_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50391082248-74usb94vreh1147skhqcebhc4r20ejds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaSBbJ8Pxf2Do-5SmLPHWJRWMrp9Zq8Lk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "50391082248-74usb94vreh1147skhqcebhc4r20ejds.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
