@@ -4,6 +4,7 @@ import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 import 'package:todo_app/core/presentation/themes/extensions/additional_colors.dart';
 import 'package:todo_app/core/presentation/themes/extensions/additional_text_styles.dart';
+import 'package:todo_app/core/presentation/utils/date_formatter.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/priority_sign.dart';
 
 class TaskListItem extends StatefulWidget {
@@ -166,7 +167,7 @@ class _TaskListItemState extends State<TaskListItem> {
             ],
           ),
           subtitle: widget.task.deadline != null
-              ? Text(AppLocalizations.of(context)!.date)
+              ? Text(DateFormatter.formatDate(widget.task.deadline!))
               : null,
           trailing: IconButton(
             icon: Icon(

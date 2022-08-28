@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
 import 'package:todo_app/core/presentation/edit_text.dart';
 import 'package:todo_app/core/presentation/themes/extensions/additional_colors.dart';
+import 'package:todo_app/core/presentation/utils/date_formatter.dart';
 import 'package:todo_app/features/task_edit/presentation/bloc/task_edit_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/features/task_edit/presentation/bloc/task_edit_state.dart';
@@ -167,7 +167,7 @@ class _TaskEditState extends State<TaskEdit> {
                                       ? Text(
                                           style: TextStyle(
                                               color: addititonalColors.blue),
-                                          _formatDate(state.task!.deadline!))
+                                          DateFormatter.formatDate(state.task!.deadline!))
                                       : Text(AppLocalizations.of(context)!
                                           .dateNotDefined),
                                   trailing: Switch(
@@ -220,15 +220,6 @@ class _TaskEditState extends State<TaskEdit> {
             );
           }),
         ));
-  }
-
-  String _formatDate(DateTime date) {
-    // TODO использовать системную локаль
-    //String dayFormat = DateFormat.d('ru_RU').format(date);
-    //String monthFormat = DateFormat.MMMM('ru_RU').format(date);
-    //String yearFormat = DateFormat.y('ru_RU').format(date);
-    //return "$dayFormat $monthFormat $yearFormat";
-    return DateFormat.yMMMMEEEEd('ru_RU').format(date);
   }
 
   String _importanceString(BuildContext context, Importance importance) {
