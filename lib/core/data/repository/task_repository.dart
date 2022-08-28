@@ -211,7 +211,7 @@ class TaskRepository {
   static T? _firstWhereOrNull<T>(List<T> list, bool Function(T) checker) {
     try {
       return list.firstWhere(checker);
-    } on StateError catch (e) {
+    } on StateError {
       return null;
     }
   }

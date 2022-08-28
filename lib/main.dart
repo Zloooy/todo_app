@@ -13,7 +13,9 @@ import 'package:todo_app/core/presentation/themes/themes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// ignore: unused_element
 const _kShouldTestAsyncErrorOnInit = false;
+// ignore: unused_element
 const _kTestingCrashlytics = true;
 void main() {
   runZonedGuarded(() async {

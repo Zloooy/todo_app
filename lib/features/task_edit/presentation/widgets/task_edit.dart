@@ -46,8 +46,6 @@ class _TaskEditState extends State<TaskEdit> {
 
   @override
   Widget build(BuildContext context) {
-    final String? taskId =
-        ModalRoute.of(context)!.settings.arguments as String?;
     final noContentUnderAppbarTheme = Theme.of(context)
         .appBarTheme
         .copyWith(elevation: 0, color: Theme.of(context).colorScheme.primary);
