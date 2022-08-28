@@ -12,7 +12,7 @@ on:
     branches: [ "development", "master" ]
 
 jobs:
-  analyze:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
