@@ -8,6 +8,7 @@ class TaskEditState with _$TaskEditState {
   factory TaskEditState({
     required String? taskId,
     required bool loaded,
+    required bool notFound,
     required bool modified,
     TaskEntity? task,
   }) = _TaskEditState;

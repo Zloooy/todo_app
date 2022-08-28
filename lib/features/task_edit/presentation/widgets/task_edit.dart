@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 import 'package:todo_app/core/data/enum/importance.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
 import 'package:todo_app/core/domain/entity/task_entity.dart';
@@ -11,8 +12,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/features/task_edit/presentation/bloc/task_edit_state.dart';
 import 'package:todo_app/features/task_edit/presentation/widgets/dropdown_list.dart';
 
+final Logger _log = Logger('TaskEdit');
 class TaskEdit extends StatefulWidget {
-  const TaskEdit({Key? key}) : super(key: key);
+
+  final String? id;
+  final String? text;
+  final VoidCallback notFound;
+
+  const TaskEdit({required this.id, required this.notFound, this.text, super.key});
 
   @override
   State<TaskEdit> createState() => _TaskEditState();
@@ -23,7 +30,7 @@ class _TaskEditState extends State<TaskEdit> {
   double offset = 0;
   bool get contentUnderAppBar => offset > 16;
   void scrollListener() {
-    print("offset ${_controller.offset}");
+    _log.info("offset ${_controller.offset}");
     setState(() {
       offset = _controller.offset;
     });
@@ -48,7 +55,7 @@ class _TaskEditState extends State<TaskEdit> {
         shadowColor: Colors.black,
         color: Theme.of(context).brightness == Brightness.dark
             ? Theme.of(context).colorScheme.surface
-            : Theme.of(context).colorScheme.primary);
+            : Theme.of(context).colorScheme.primary,);
     final AdditionalColors addititonalColors =
         Theme.of(context).extension<AdditionalColors>()!;
     return Theme(
@@ -59,9 +66,16 @@ class _TaskEditState extends State<TaskEdit> {
         ),
         child: BlocProvider(
           create: (context) => TaskEditBloc(
-              taskId: taskId,
-              taskRepository: RepositoryProvider.of<TaskRepository>(context)),
-          child: BlocBuilder<TaskEditBloc, TaskEditState>(
+              taskId: widget.id,
+              //TODO add text
+              taskRepository: RepositoryProvider.of<TaskRepository>(context)
+              ),
+          child: BlocConsumer<TaskEditBloc, TaskEditState>(
+              listener: (context, state) {
+                if (state.loaded && state.notFound){
+                  widget.notFound();
+                }
+              },
               builder: (context, state) {
             return Scaffold(
               appBar: AppBar(

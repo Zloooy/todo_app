@@ -57,7 +57,7 @@ class _AddTaskState extends State<AddTask> {
                         onPressed: () => _onInputEnd(context)(state.text),
                         icon: Icon(
                           Icons.add,
-                          ),
+                        ),
                       );
                     },
                   ),

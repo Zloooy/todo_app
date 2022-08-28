@@ -5,13 +5,15 @@ import 'package:todo_app/core/data/data_source/local_data_source.dart';
 import 'package:todo_app/core/dependency_injection/global_provider.dart';
 import 'package:todo_app/core/presentation/bloc/theme_bloc.dart';
 import 'package:todo_app/core/presentation/bloc/theme_state.dart';
-import 'package:todo_app/core/presentation/navigation/navigator_service.dart';
-import 'package:todo_app/core/presentation/navigation/routes.dart';
+import 'package:todo_app/core/presentation/navigation/bloc/navigation_bloc.dart';
+import 'package:todo_app/core/presentation/navigation/todo_route_information.dart';
+import 'package:todo_app/core/presentation/navigation/todo_route_information_parsrer.dart';
+import 'package:todo_app/core/presentation/navigation/todo_router_delegate.dart';
 import 'package:todo_app/core/presentation/themes/themes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:uni_links/uni_links.dart';
 void main() async {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
@@ -20,21 +22,34 @@ void main() async {
   });
   await LocalTaskDataSource.init();
   await dotenv.load(fileName: 'credentials.env');
-  runApp(const MyApp());
+  String? initialLink = await getInitialLink();
+  final informationParser = TodoRouteInformationParser();
+  final RouteInformation? toParse = RouteInformation(location: initialLink);
+  final TodoRouteInformation? info = (toParse != null) ? await informationParser.parseRouteInformation(toParse) : null;
+  runApp(TodoApp(initialInformation: info, informationParser: informationParser));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TodoApp extends StatelessWidget {
+  final TodoRouteInformation? initialInformation;
+  final TodoRouteInformationParser informationParser;
+
+  TodoApp({required this.initialInformation, required this.informationParser, super.key});
 
   @override
   Widget build(BuildContext context) {
     return GlobalProvider(
-      app: BlocProvider(
-        create: (context) => ThemeBloc(),
+      app: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => ThemeBloc(),
+          ),
+          BlocProvider(
+            create: (context) => NavigationBloc(initialInformation: initialInformation, informationParser: informationParser),
+          )
+        ],
         child: BlocBuilder<ThemeBloc, ThemeState>(
           builder: (context, state) {
-            return MaterialApp(
-              navigatorKey: NavigatorService.navigatorKey,
+            return MaterialApp.router(
               localizationsDelegates: const [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
@@ -46,8 +61,10 @@ class MyApp extends StatelessWidget {
               theme: lightTheme,
               darkTheme: darkTheme,
               themeMode: state.mode,
-              routes: Routes.routes,
-              initialRoute: Routes.TASK_LIST_ROUTE,
+                routerDelegate: TodoRouterDelegate(
+                  bloc: BlocProvider.of<NavigationBloc>(context),
+                  ),
+              routeInformationParser: informationParser,
             );
           },
         ),

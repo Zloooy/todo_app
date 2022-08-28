@@ -143,7 +143,8 @@ class _TaskListItemState extends State<TaskListItem> {
                                       right: 6,
                                     ),
                                     child: PrioritySign(
-                                        importance: widget.task.importance,),
+                                      importance: widget.task.importance,
+                                    ),
                                   ),
                                 ),
                               TextSpan(

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/core/data/enum/network_state.dart';
 import 'package:todo_app/core/data/repository/task_repository.dart';
 import 'package:todo_app/core/presentation/bloc/theme_bloc.dart';
-import 'package:todo_app/core/presentation/navigation/navigator_service.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_bloc.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_state.dart';
 import 'package:todo_app/features/task_list/presentation/widgets/add_task.dart';
@@ -14,7 +13,9 @@ import 'package:todo_app/core/presentation/bloc/theme_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskList extends StatelessWidget {
-  const TaskList({Key? key}) : super(key: key);
+  final Future<void> Function(String?) openTask;
+
+  TaskList({required this.openTask, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -94,10 +95,7 @@ class TaskList extends StatelessWidget {
                                                 ),
                                                 task: state.tasks[i],
                                                 onInfoClick: () async {
-                                                  await NavigatorService
-                                                      .goToEditTask(
-                                                    state.tasks[i],
-                                                  );
+                                                  await openTask(state.tasks[i].id);
                                                   BlocProvider.of<TaskListBloc>(
                                                     context,
                                                   ).add(
@@ -127,7 +125,7 @@ class TaskList extends StatelessWidget {
                   floatingActionButton: FloatingActionButton(
                     child: const Icon(Icons.add),
                     onPressed: () async {
-                      await NavigatorService.goToEditTask(null);
+                      await openTask(null);
                       BlocProvider.of<TaskListBloc>(context)
                           .add(ReloadTaskListEvent());
                     },
