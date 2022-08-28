@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_bloc.dart';
+import 'package:todo_app/features/task_list/presentation/bloc/task_list_bloc/task_list_bloc.dart';
 import 'package:logging/logging.dart';
 import 'package:todo_app/core/data/data_source/local_data_source.dart';
 import 'package:todo_app/core/data/data_source/network_task_data_source.dart';
@@ -32,9 +33,7 @@ class GlobalProvider extends StatelessWidget {
   static Future<GlobalProviderDependencyContainer> initedDependencies() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Future.wait<Object?>([
-      LocalTaskDataSource.init(),
-      dotenv.load(fileName: _credentials_asset),
-      Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+      LocalTaskDataSource.init(), dotenv.load(fileName: _credentials_asset), Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
     ]);
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     Logger.root.level = Level.ALL;
