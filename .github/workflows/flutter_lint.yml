@@ -23,6 +23,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Generate localizations
+      - run: flutter gen-l10n
+
+      - name: Run code generators
+      - run: flutter pub run build_runner build
+
       # Uncomment this step to verify the use of 'dart format' on each commit.
       - name: Verify formatting
         run: flutter format --output=none --set-exit-if-changed .

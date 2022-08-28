@@ -16,12 +16,12 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: 'master'
-      - run: touch credentials.env
-      - run: echo ${{secrets.TOKEN}} >> credentials.env
-      - run: flutter pub get
-      - run: flutter pub run build_runner build
-      - run: flutter gen-l10n
-      - run: flutter build apk
+        run: touch credentials.env
+        run: echo ${{secrets.TOKEN}} >> credentials.env
+        run: flutter pub get
+        run: flutter pub run build_runner build
+        run: flutter gen-l10n
+        run: flutter build apk
     - name: Create Draft Release
       id: create_release
       uses: actions/create-release@v1
