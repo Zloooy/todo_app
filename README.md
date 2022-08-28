@@ -25,6 +25,8 @@
   * todo://to.do/tasks/new - создание новой задачи
   * todo://to.do/tasks/\<id задачи\> - проверка задачи
   Остальные адреса возвращают страницу ошибки.
+* Firebase Crashlytics, Firebase Analytics
 
 ## Work in progress
-* Работа с Firebase
+* Тесты
+* Работа с Firebase remote config
