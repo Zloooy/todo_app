@@ -232,6 +232,8 @@ class _TaskEditState extends State<TaskEdit> {
       case (Importance.low):
         return AppLocalizations.of(context)!.importanceLow;
     }
+    // Master channel could deal with it
+    return '';
   }
 
   void _pickDate(BuildContext context, TaskEntity task) async {
