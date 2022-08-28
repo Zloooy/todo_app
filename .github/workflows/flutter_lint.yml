@@ -29,6 +29,8 @@ jobs:
       - name: Run code generators
         run: flutter pub run build_runner build
 
+      - name: Generate stub file with no credentials
+        run: touch credentials.env
       # Uncomment this step to verify the use of 'dart format' on each commit.
       - name: Verify formatting
         run: flutter format --output=none --set-exit-if-changed .
