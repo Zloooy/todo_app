@@ -143,6 +143,7 @@ class TaskList extends StatelessWidget {
       case (ThemeMode.system):
         return AppLocalizations.of(context)!.switchedToSystemTheme;
     }
+    return '';
   }
 
   String _networkStateMessage(BuildContext context, NetworkState networkState) {
