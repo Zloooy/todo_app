@@ -12,13 +12,13 @@ on:
     branches: [ "development", "master" ]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    uses: steebchen/flutter@v1.1.0
-
     steps:
-      - uses: actions/checkout@v3
-      - name: flutter-cli
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
